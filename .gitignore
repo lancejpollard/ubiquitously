@@ -1,0 +1,10 @@
+test/result*
+.DS_Store
+pkg/**/*
+doc/**/*
+*.tgz
+*.gem
+*.result
+*.yml
+*.gemspec
+test/config.yml
