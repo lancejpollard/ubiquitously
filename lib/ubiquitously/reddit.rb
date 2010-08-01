@@ -16,7 +16,7 @@ module Ubiquitously
           raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
         end
         
-        @logged_in = true
+        @logged_in
       end
     end
     

@@ -40,6 +40,11 @@ Many social bookmarking services do not have API's in order to prevent spammers 
 
 So Ubiquitously creates a simple, RESTful API around some services I need to publish to now, and hopefully it will grow as you guys need more.  The goal is to be semi-low-level and not to provide a full featured api to a service, as some services already have very well-done API's in Ruby.
 
-## Other Possible Services
+## Other Possible Services (and Resources)
 
-- [http://www.blurpalicious.com](http://www.blurpalicious.com)
+- [http://www.iwoodpecker.com/collection-of-70-best-social-bookmarking-sites-with-pr-and-alexa/](http://www.iwoodpecker.com/collection-of-70-best-social-bookmarking-sites-with-pr-and-alexa/)
+- buzz.yahoo.com
+- http://www.wikio.com/about-us
+- http://designbump.com/
+- http://scriptandstyle.com/submit
+- http://www.stumpedia.com/submitlink.php
