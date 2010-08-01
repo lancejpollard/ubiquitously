@@ -33,9 +33,15 @@ module Ubiquitously
         form["title"] = title
         form["url"]   = url
         form["id"] = "#newlink"
+        if page.body =~ /modhash\:\s+'([^']+)'/
+          form["uh"] = $1
+        end
+        form["renderstyle"] = "html"
+        form["kind"] = "link"
+        
         form.action = "http://www.reddit.com/api/submit"
         headers = {
-          "Content-Type" => "application/json"
+          "X-Requested-With" => "XMLHttpRequest"
         }
         unless options[:debug] == true
           page = form.submit(nil, headers)
