@@ -2,6 +2,8 @@ module Ubiquitously
   module Mixx
     class User
       def login
+        return true if logged_in?
+        
         page = agent.get("https://www.mixx.com/login")
         form = page.form_with(:action => "https://www.mixx.com/save_login")
         form["user[loginid]"] = u

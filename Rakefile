@@ -66,3 +66,13 @@ end
 task :yank do
   `gem yank #{spec.name} -v #{spec.version}`
 end
+
+desc 'run unit tests'
+task :test do
+  Dir["test/**/*"].each do |file|
+    next unless File.extname(file) == ".rb"
+    next unless File.basename(file) =~ /test_/
+    next if File.basename(file) =~ /test_helper/
+    require file
+  end
+end
