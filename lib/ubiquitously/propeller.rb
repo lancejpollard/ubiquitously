@@ -2,13 +2,14 @@ module Ubiquitously
   module Propeller
     class User < Ubiquitously::Base::User
       def login
+        puts "LOGGING IN"
         page = agent.get("http://www.propeller.com/signin/")
         form = page.forms.detect {|form| form.form_node["class"] == "ajax-form"}
         form["member_name"] = username
         form["password"]    = password
         form["submit"]      = "sign in" # require to get around the ajax
         page                = form.submit
-        
+        puts "DONE"
         @logged_in = (page.body =~ /Invalid member name or password/i).nil? && (page.body =~ /ajax-form/).nil?
         
         unless @logged_in
@@ -32,12 +33,12 @@ module Ubiquitously
         page        = agent.get("http://www.propeller.com/story/submit/")
         form        = page.forms.detect {|form| form.form_node["method"].downcase == "post"}
         form["url"] = url
-        
+        puts "SUBMIT FORM"
         # details
         # http://www.propeller.com/story/submit/content/
         page        = form.submit
         form        = page.forms.detect {|form| form.form_node["method"].downcase == "post"}
-        
+        puts "DETAILS"
         form.radiobuttons_with(:name => "title_multi").each do |button|
           button.check if button.value == "-1"
         end
@@ -53,6 +54,7 @@ module Ubiquitously
         
         # http://www.propeller.com/story/submit/preview/
         page = form.submit
+        puts "SUBMIT DETAILS"
         # approve
         page.forms[1].submit
         

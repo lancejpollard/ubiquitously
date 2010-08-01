@@ -23,18 +23,22 @@ module Ubiquitously
     class Post < Ubiquitously::Base::Post
       validates_presence_of :url, :title
       
-      def save
+      def save(options = {})
         return false unless valid?
         
         user.login
         
         page = agent.get("http://www.reddit.com/submit")
-        form = page.form_with(:id => "newlink")
+        form = page.forms.detect {|form| form.form_node["id"] == "newlink"}
         form["title"] = title
         form["url"]   = url
-        
+        form["id"] = "#newlink"
+        form.action = "http://www.reddit.com/api/submit"
+        headers = {
+          "Content-Type" => "application/json"
+        }
         unless options[:debug] == true
-          page = form.submit
+          page = form.submit(nil, headers)
         end
       end
     end
