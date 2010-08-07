@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 module Ubiquitously
   class StumbleUponTest < ActiveSupport::TestCase
-    context "StumbleUpon::User" do
+    context "StumbleUpon::Account" do
       setup do
-        @user = Ubiquitously::StumbleUpon::User.new
+        @user = Ubiquitously::StumbleUpon::Account.new
       end
       
       context "login" do

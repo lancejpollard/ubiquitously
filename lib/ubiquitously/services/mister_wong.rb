@@ -1,6 +1,6 @@
 module Ubiquitously
   module MisterWong
-    class User
+    class Account
       
     end
     

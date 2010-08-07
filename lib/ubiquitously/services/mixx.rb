@@ -1,6 +1,6 @@
 module Ubiquitously
   module Mixx
-    class User < Ubiquitously::Base::User
+    class Account < Ubiquitously::Base::Account
       def login
         return true if logged_in?
         
@@ -21,10 +21,10 @@ module Ubiquitously
     end
     
     class Post < Ubiquitously::Base::Post
-      def save
-        return false unless valid?
-        
-        user.login
+      def save(options = {})
+        return false if !valid? || new_record?
+
+        authorize
         
         page = agent.get("http://www.mixx.com/submit")
         form = page.form_with(:action => "http://www.mixx.com/submit/step2")
@@ -60,6 +60,34 @@ module Ubiquitously
         form["recaptcha_response_field"] = captcha_says
         
         form.submit
+      end
+      
+      class << self
+        def find(options = {})
+          records = []
+          user = options[:user]
+          user_url = "http://www.mixx.com/feeds/users/#{user.username_for(self)}"
+          xml = Nokogiri::XML(open(user_url).read)
+          urls = url_permutations(options[:url])
+          
+          xml.css("item").each do |node|
+            title = node.css("title").first.text
+            url   = node.xpath("mixx:source", {"mixx" => "http://www.mixx.com/mixxrss/"}).first.text
+            description = node.css("description").first.text
+            service_url = node.css("link").first.text
+            record = new(
+              :title => title,
+              :url => url,
+              :description => description,
+              :service_url => service_url,
+              :user => user
+            )
+            return record if urls.include?(record.url)
+            records << record
+          end
+          
+          options[:url] ? nil : records
+        end
       end
     end
   end

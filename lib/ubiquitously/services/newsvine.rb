@@ -1,6 +1,6 @@
 module Ubiquitously
   module Newsvine
-    class User < Ubiquitously::Base::User
+    class Account < Ubiquitously::Base::Account
       def login
         return true if logged_in?
         
@@ -25,9 +25,9 @@ module Ubiquitously
       validates_presence_of :url, :title
       
       def save(options = {})
-        return false unless valid?
+        return false if !valid? || new_record?
         
-        user.login
+        authorize
         
         page = agent.get("http://www.newsvine.com/_tools/seed")
         form = page.form_with(:action => "http://www.newsvine.com/_action/tools/saveLink")
@@ -48,6 +48,39 @@ module Ubiquitously
         end
         
         true
+      end
+      
+      class << self
+        def find(options = {})
+          records = []
+          user = options[:user]
+          user_url = "http://#{user.username_for(self)}.newsvine.com"
+          html = Nokogiri::HTML(open(user_url).read)
+          urls = url_permutations(options[:url])
+          
+          html.css(".quickpost").each do |node|
+            title = node.css("h1").first.text rescue nil
+            url   = node.css("a.external").first["href"] rescue nil
+            description = node.xpath("p").first.text rescue nil
+            service_url = node.css("h1 a").first["href"] rescue nil
+            tags = []
+            node.css(".tags a").each do |tag|
+              tags << tag.text
+            end
+            record = new(
+              :title => title,
+              :url => url,
+              :description => description,
+              :tags => tags,
+              :service_url => service_url,
+              :user => user
+            )
+            return record if urls.include?(record.url)
+            records << record
+          end
+          
+          options[:url] ? nil : records
+        end
       end
     end
   end

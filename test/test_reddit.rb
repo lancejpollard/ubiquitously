@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 module Ubiquitously
   class RedditTest < ActiveSupport::TestCase
-    context "Reddit::User" do
+    context "Reddit::Account" do
       setup do
-        @user = Ubiquitously::Reddit::User.new
+        @user = Ubiquitously::Reddit::Account.new
       end
       
       context "login" do

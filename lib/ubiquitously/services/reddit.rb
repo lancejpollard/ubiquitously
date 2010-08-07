@@ -1,6 +1,6 @@
 module Ubiquitously
   module Reddit
-    class User < Ubiquitously::Base::User
+    class Account < Ubiquitously::Base::Account
       def login
         return true if logged_in?
         

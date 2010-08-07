@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
-require 'restclient'
+
 module Ubiquitously
   class FavesTest < ActiveSupport::TestCase
-    context "Faves::User" do
+    context "Faves::Account" do
       setup do
-        @user = Ubiquitously::Faves::User.new
+        @user = Ubiquitously::Faves::Account.new
       end
       
       context "login" do
@@ -20,7 +20,6 @@ module Ubiquitously
         end
       end
     end
-=begin    
     context "Faves::Post" do
       setup do
         @post = Ubiquitously::Faves::Post.new(
@@ -29,7 +28,7 @@ module Ubiquitously
           :description => "A Description",
           :tags => ["usability", "ruby", "web services", "open source"],
           :url => "http://example.com/abcdef",
-          :user => Ubiquitously::Faves::User.new
+          :user => Ubiquitously::Faves::Account.new
         )
       end
       
@@ -37,6 +36,5 @@ module Ubiquitously
         assert @post.save
       end
     end
-=end    
   end
 end

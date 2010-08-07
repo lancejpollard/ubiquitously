@@ -13,7 +13,7 @@ require 'active_model'
 this = File.dirname(__FILE__)
 require "#{this}/ext"
 Dir["#{this}/ubiquitously/mixins/*"].each { |c| require c }
-require "#{this}/ubiquitously/base"
+require "#{this}/ubiquitously/services/base"
 
 module Ubiquitously
   class SettingsError < StandardError; end
@@ -40,7 +40,16 @@ module Ubiquitously
       end
       result
     end
+    
+    def services
+      Dir.entries(File.dirname(__FILE__) + '/ubiquitously/services')[2..-1].collect do |service|
+        service = File.basename(service).split(".").first
+      end
+    end
   end
 end
 
-Dir["#{this}/ubiquitously/*"].each { |c| require c unless File.directory?(c) }
+require "#{this}/ubiquitously/user"
+require "#{this}/ubiquitously/page"
+require "#{this}/ubiquitously/post"
+Dir["#{this}/ubiquitously/services/*"].each { |c| require c unless File.directory?(c) }

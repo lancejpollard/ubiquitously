@@ -45,6 +45,7 @@ module Ubiquitously
       def assert_required_arguments(options)
         self.class.assert_required_arguments(options)
       end
+      
     end
   end
 end

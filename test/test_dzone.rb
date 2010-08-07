@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 module Ubiquitously
   class DzoneTest < ActiveSupport::TestCase
-    context "Dzone::User" do
+    context "Dzone::Account" do
       setup do
-        @user = Ubiquitously::Dzone::User.new
+        @user = Ubiquitously::Dzone::Account.new
       end
       
       context "login" do

@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 
 module Ubiquitously
-  class YahooBuzzTest < ActiveSupport::TestCase
-    context "YahooBuzz::User" do
+  class DiggTest < ActiveSupport::TestCase
+    context "Digg::Account" do
       setup do
-        @user = Ubiquitously::YahooBuzz::User.new
+        @user = Ubiquitously::Digg::Account.new
       end
       
       context "login" do
@@ -13,30 +13,30 @@ module Ubiquitously
           assert_raises(Ubiquitously::AuthenticationError) do
             @user.login
           end
-          assert_equal false, @user.logged_in?
         end
         
         should "login successfully if valid credentials" do
           assert_equal true, @user.login
-          assert_equal true, @user.logged_in?
         end
       end
     end
-    
-    context "YahooBuzz::Post" do
+=begin    
+    context "Digg::Post" do
       setup do
-        @post = Ubiquitously::YahooBuzz::Post.new(
+        @post = Ubiquitously::Digg::Post.new(
+          :debug => true,
           :title => "A Title",
           :description => "A Description",
           :tags => ["usability", "ruby", "web services", "open source"],
           :url => "http://example.com/abcdef",
-          :user => Ubiquitously::YahooBuzz::User.new
+          :user => Ubiquitously::Digg::Account.new
         )
       end
       
       should "create a post" do
-        assert @post.save(:debug => true)
+        assert @post.save
       end
     end
+=end    
   end
 end

@@ -11,3 +11,12 @@ require 'rr'
 require File.dirname(__FILE__) + '/../lib/ubiquitously'
 
 Ubiquitously.configure("test/config.yml")
+
+ActiveSupport::TestCase.class_eval do
+  def create_user
+    @user = Ubiquitously::User.new(
+      :username => "viatropos",
+      :cookies_path => "test/cookies.yml"
+    )
+  end
+end

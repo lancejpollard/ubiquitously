@@ -2,9 +2,9 @@ require File.dirname(__FILE__) + '/test_helper.rb'
 
 module Ubiquitously
   class PropellerTest < ActiveSupport::TestCase
-    context "Propeller::User" do
+    context "Propeller::Account" do
       setup do
-        @user = Ubiquitously::Propeller::User.new
+        @user = Ubiquitously::Propeller::Account.new
       end
       
       context "login" do

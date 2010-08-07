@@ -8,3 +8,4 @@ doc/**/*
 *.yml
 *.gemspec
 test/config.yml
+test/cookies.yml

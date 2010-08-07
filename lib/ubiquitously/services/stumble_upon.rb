@@ -1,15 +1,17 @@
 module Ubiquitously
   module StumbleUpon
-    class User < Ubiquitously::Base::User
+    class Account < Ubiquitously::Base::Account
       def login
+        return true if logged_in?
+        
         page = agent.get("http://www.stumbleupon.com/login.php")
         form = page.form_with(:name => "formLogin")
         form["username"] = username
         form["password"] = password
         page = form.submit
-        
-        @logged_in = (page.body =~ /Invalid username/i).nil?
-        
+
+        @logged_in = !(page.body =~ /Currently logged in/i).blank?
+
         unless @logged_in
           raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
         end

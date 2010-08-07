@@ -1,16 +1,16 @@
 module Ubiquitously
   module Dzone
-    class User < Ubiquitously::Base::User
+    class Account < Ubiquitously::Base::Account
       def login
         return true if logged_in?
-        
+
         page = agent.get("http://www.dzone.com/links/loginLightbox.html")
         form = page.form_with(:action => "/links/j_acegi_security_check")
         form["j_username"] = username
         form["j_password"] = password
         page = form.submit
         
-        @logged_in = (page.body !~ /Invalid username or password/i).nil?
+        @logged_in = (page.body =~ /Invalid username or password/i).nil?
         
         unless @logged_in
           raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
@@ -25,7 +25,7 @@ module Ubiquitously
     end
     
     class Post < Ubiquitously::Base::Post
-      validates_presence_of :url, :title, :description, :service_url
+      validates_presence_of :url, :title, :description, :categories
       
       class << self
         
@@ -63,14 +63,14 @@ module Ubiquitously
         def new_record?(url, throw_error = false)
           exists = !find(url).blank?
           raise DuplicateError.new("DZone already links to #{url}") if throw_error && exists
-          exists
+          !exists
         end
       end
       
       def save(options = {})
-        return false unless valid? && new_record?
+        return false if !valid? || new_record?
         
-        user.login
+        authorize
         
         # url
         page        = agent.get("http://www.dzone.com/links/add.html")
@@ -82,7 +82,7 @@ module Ubiquitously
           accepted_tags << tag.value.to_s
         end
         
-        unaccepted_tags = tags.select { |tag| !accepted_tags.include?(tag) }
+        unaccepted_tags = categories.select { |tag| !accepted_tags.include?(tag) }
         
         if unaccepted_tags.length > 0
           raise ArgumentError.new("DZone doesn't accept these tags: #{unaccepted_tags.inspect}, they want these:\n#{accepted_tags.inspect}")
@@ -93,7 +93,7 @@ module Ubiquitously
         form["description"] = description
         
         form.checkboxes_with(:name => "tags").each do |checkbox|
-          checkbox.check if tags.include?(checkbox.value)
+          checkbox.check if categories.include?(checkbox.value)
         end
         
         unless options[:debug] == true

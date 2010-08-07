@@ -1,6 +1,6 @@
 module Ubiquitously
   module YahooBuzz
-    class User < Ubiquitously::Base::User
+    class Account < Ubiquitously::Base::Account
       def login
         page = agent.get("https://login.yahoo.com/config/login_verify2")
         form = page.form_with(:name => "login_form")

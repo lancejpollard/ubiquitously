@@ -5,7 +5,7 @@ require 'rake/gempackagetask'
 # http://docs.rubygems.org/read/chapter/20
 spec = Gem::Specification.new do |s|
   s.name              = "ubiquitously"
-  s.version           = "0.0.1.6"
+  s.version           = "0.0.1.5"
   s.author            = "Lance Pollard"
   s.summary           = "Ubiquitously: Making it easy for you to be everywhere, even if there's no API"
   s.homepage          = "http://github.com/viatropos/ubiquitously"
