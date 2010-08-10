@@ -14,12 +14,6 @@ Fill out `test/config.yml` with your credentials for the different services, the
 
     rake test
     
-### Register for the services you haven't already
-
-First edit the config file with a username, password, and other fields that all the systems might have.  Then run this
-
-    rake ubiquitously:me
-    
 ### Automatically Post to Services
 
     require 'rubygems'
@@ -85,6 +79,55 @@ So Ubiquitously creates a simple, RESTful API around some services I need to pub
 
 Currently there's plenty of services to post about yourself: ping.fm, onlywire, posterous...  But what if you want to do the same for other people?  You're left having to go to the page and click one of their social buttons, and filling out the form.  No way I'm filling out more than one for a page.  This solves that problem, making it so you can post someone else's site to a million places just like yours, helping you build a community.
 
+## What you should be doing...
+
+### Writing Tutorials
+
+- http://www.thedesigncubicle.com/2009/12/websites-to-submit-your-design-articles-that-produce-heavy-traffic/
+
+### Posting in Forums
+
+- Comment in the forums
+
+- http://www.warriorforum.com/
+
+### Adding to Article Directories
+
+### Guest Posting
+
+### Publishing Documents
+
+- scribd
+
+### Contributing Code
+
+- snippets, github
+
+### Sharing and Tagging
+
+- Share others' content to stumbleupon, delicious, digg, diigo, reddit, tumblr, twitter, mixx, and identica.
+- Tag other's posts on stumbleupon, delicious, digg, diigo, and reddit.
+- Stumble other peoples posts that link to you.  You'll benefit them and yourself.
+
+### Commenting on Blogs
+
+- Comment on other people's blogs
+
+## Tips and Resources
+
+- http://www.highrevenue.com/free-website-traffic/critique-of-50-top-ways-to-drive-traffic-to-your-site
+- http://www.highrevenue.com/linkbuilding-techniques/make-link-building-the-cornerstone-of-you-daily-activities
+- Linkbuilding is not a sprint… it is a MARATHON!
+
+- http://hubpages.com/hub/viatropos
+- http://www.mybloglog.com/
+- http://www.stumblexchange.com/
+- http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/
+
+1. Get a bunch of feeds
+2. Read the feeds
+3. Share the feeds
+
 ## Todo
 
 - Find image on page for display
@@ -94,30 +137,7 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
   - content type: video, image, post, status
   - edit
   - sumbit
-
-## Other Possible Services (and Resources)
-
-- [http://www.iwoodpecker.com/collection-of-70-best-social-bookmarking-sites-with-pr-and-alexa/](http://www.iwoodpecker.com/collection-of-70-best-social-bookmarking-sites-with-pr-and-alexa/)
-- buzz.yahoo.com
-- http://www.wikio.com/about-us
-- http://designbump.com/
-- http://scriptandstyle.com/submit
-- http://www.stumpedia.com/submitlink.php
-- [http://github.com/heurionconsulting/bookmark_url_to/blob/master/lib/bookmark_url_to.rb](http://github.com/heurionconsulting/bookmark_url_to/blob/master/lib/bookmark_url_to.rb)
-- Squidoo: http://www.squidoo.com/lensmaster/bookmark
-- http://github.com/mwunsch/tumblr
-  photo, link, quote, conversation, video, audio
-- automatically post code to github gists
-- publish to twitter, identica, buzz, friendfeed...
-- http://pingomatic.com/
-- http://www.diigo.com/user/viatropos
-- https://www.threadsy.com
-- http://blogmarks.net/marks/search/ruby+on+rails
-- http://youblr.com/web/ruby+on+rails
-- http://www.social-bookmarking.net/search/ruby%20on%20rails
-- http://www.doshdosh.com/the-secret-to-building-a-popular-blog/
-- yahoo meme
-- http://feedback.seesmic.com/forums/37482-ping-fm/suggestions/436114-add-robust-ability-to-schedule-updates?utm_campaign=Widgets&utm_medium=widget&utm_source=feedback.seesmic.com
-- http://www.lettermelater.com/
-- schedule updates to go out.
-- http://viatropos.status.net
+- each needs to check to see if post already exists
+- handle categories in a generic way
+- handle captchas
+- if this is actually useful, maybe creating accounts programmatically
