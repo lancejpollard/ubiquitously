@@ -19,44 +19,20 @@ Fill out `test/config.yml` with your credentials for the different services, the
     require 'rubygems'
     require 'ubiquitously'
     
-    # dzone
-    Ubiquitously::Dzone::Post.create(
-      :title => "A Dzone Post!",
-      :description => "Dzone does not let you edit or delete posts once you submit them, so be careful!",
-      :tags => ["dzone", "web 2.0"]
-    )
-    
-## API
-
-There's a pretty simple API to this, please let me know what I can do to make it better.
-
-    # some way to store cookies for all the services you'll login to
     user = Ubiquitously::User.new(
-      :username => "your-name",
-      :cookie_path => "data/cookies.yml"
+      :username => "viatropos",
+      :name => "Lance Pollard",
+      :email => "lancejpollard@gmail.com",
+      :cookies_path => "_cookies.yml"
     )
-    
     post = Ubiquitously::Post.new(
-      :url => "http://wikipedia.org/an-article",
-      :title => "My Article",
-      :tags => ["article", "community-wiki"]
+      :url          => "http://postable.com",
+      :title        => "An Interesting Post!",
+      :description  => "This is one of those rare things on the web...",
+      :tags         => ["writing", "programming", "javascript", "html", "ruby on rails"],
+      :user         => user
     )
-    
-    post.save(:dzone, :digg, :diigo, :newsvine)
-    
-    post.dzone? #=> true, dzone has the record
-    post.dzone.tags #=> ["dzone's", "tags"]
-    post.tumblr? #=> false, tumblr doesn't have it
-    post.tumblr.save
-    
-You can also create accounts for users (eventually):
-
-    user = Ubiquitously::User.new(:username => "your-name")
-    user.create(
-      :dzone, :reddit, :sphinn,
-      :username => "something",
-      :password => "something"
-    )
+    post.save("stumbleupon", "delicious", "dzone", "digg", "diigo", "reddit", "tumblr", "mixx")
 
 ## How it thinks
 
@@ -115,14 +91,12 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 ## Tips and Resources
 
-- http://www.highrevenue.com/free-website-traffic/critique-of-50-top-ways-to-drive-traffic-to-your-site
-- http://www.highrevenue.com/linkbuilding-techniques/make-link-building-the-cornerstone-of-you-daily-activities
+- [http://www.highrevenue.com/free-website-traffic/critique-of-50-top-ways-to-drive-traffic-to-your-site](http://www.highrevenue.com/free-website-traffic/critique-of-50-top-ways-to-drive-traffic-to-your-site)
+- [http://www.highrevenue.com/linkbuilding-techniques/make-link-building-the-cornerstone-of-you-daily-activities](http://www.highrevenue.com/linkbuilding-techniques/make-link-building-the-cornerstone-of-you-daily-activities)
 - Linkbuilding is not a sprint… it is a MARATHON!
-
-- http://hubpages.com/hub/viatropos
-- http://www.mybloglog.com/
-- http://www.stumblexchange.com/
-- http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/
+- [http://hubpages.com/hub/viatropos](http://hubpages.com/hub/viatropos)
+- [http://www.mybloglog.com/](http://www.mybloglog.com/)
+- [http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/](http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/)
 
 1. Get a bunch of feeds
 2. Read the feeds
