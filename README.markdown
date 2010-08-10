@@ -36,12 +36,29 @@ Fill out `test/config.yml` with your credentials for the different services, the
 
 ## How it thinks
 
-It divides actions into 4:
+It treats everything as a `Post`.  A post has these properties:
+
+- `title`: Name of the post/file/content
+- `url`: Url to the post
+- `description`: Description/summary/comment for the post.  Ranges from 50-1000 characters.  Most services only allow plain, but some (code snippets, and tumblr) allow html or code.
+- `tags`: Array of lowercased tags.  Formats tags how services want them (e.g. comma separated vs. dashed).  Applies tag limits if necessary.  These are user-defined.
+- `categories`: Category for the post.  Most services allow 1 category, some up to 4.  These are specific to the service.
+- `vote`: Vote for the post, either "up", "down", or "none" (or 1, 0, -1).  Only if applicable to the service.
+- `rating`: Rating for the post, 1-5, if applicable.
+- `private`: Whether the service is public or private (0 == public, 1 == private)
+- `state`: Status of the post, either "published", "draft", "submitted", or "queued".
+- `kind`: The type of post, either post, link, quote, comment, image, video, audio, or answer.
+- `format`: The format of your post content, either "plain", "html", "markdown", "textile", or any code (ruby, c, php, etc.).
+- `service`: This is generated from the class, e.g. "digg".
+- `service_url`: The url the service provides to the post.
+
+Each service requires different things, which are determined by the `validates_presence_of` declaration for each class.  Conceptually, you can divide the services into these categories:
 
 1. Microblogging (twitter, yahoo meme, google buzz, identica)
 2. Tumblelogging (tumblr, posterous)
 3. Blogging (large posts)
 4. Bookmarking
+5. Code Sharing (gist, snipplr, dzone snippets, pastie, snipt, pastebin)
 
 ## How it works
 
@@ -59,13 +76,9 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 ### Writing Tutorials
 
-- http://www.thedesigncubicle.com/2009/12/websites-to-submit-your-design-articles-that-produce-heavy-traffic/
-
 ### Posting in Forums
 
 - Comment in the forums
-
-- http://www.warriorforum.com/
 
 ### Adding to Article Directories
 
@@ -93,10 +106,13 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 - [http://www.highrevenue.com/free-website-traffic/critique-of-50-top-ways-to-drive-traffic-to-your-site](http://www.highrevenue.com/free-website-traffic/critique-of-50-top-ways-to-drive-traffic-to-your-site)
 - [http://www.highrevenue.com/linkbuilding-techniques/make-link-building-the-cornerstone-of-you-daily-activities](http://www.highrevenue.com/linkbuilding-techniques/make-link-building-the-cornerstone-of-you-daily-activities)
-- Linkbuilding is not a sprint… it is a MARATHON!
 - [http://hubpages.com/hub/viatropos](http://hubpages.com/hub/viatropos)
 - [http://www.mybloglog.com/](http://www.mybloglog.com/)
 - [http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/](http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/)
+- [http://www.thedesigncubicle.com/2009/12/websites-to-submit-your-design-articles-that-produce-heavy-traffic/](http://www.thedesigncubicle.com/2009/12/websites-to-submit-your-design-articles-that-produce-heavy-traffic/)
+- [http://www.warriorforum.com/](http://www.warriorforum.com/)
+
+> Linkbuilding is not a sprint... it is a MARATHON!
 
 1. Get a bunch of feeds
 2. Read the feeds
@@ -115,3 +131,4 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - handle categories in a generic way
 - handle captchas
 - if this is actually useful, maybe creating accounts programmatically
+- optimize login, i could probably skip the entire "parse form" section and just do a raw post.
