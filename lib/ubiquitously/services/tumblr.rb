@@ -18,10 +18,10 @@ module Ubiquitously
           :query => {
             :email => user.username,
             :password => user.password,
-            :type => 
+            :type => "link",
             :name => token[:title],
             :url => token[:url],
-            :description => token[:description]
+            :description => token[:description],
             :tags => token[:tags],
           }
         })

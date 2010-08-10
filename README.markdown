@@ -45,7 +45,7 @@ It treats everything as a `Post`.  A post has these properties:
 - `categories`: Category for the post.  Most services allow 1 category, some up to 4.  These are specific to the service.
 - `vote`: Vote for the post, either "up", "down", or "none" (or 1, 0, -1).  Only if applicable to the service.
 - `rating`: Rating for the post, 1-5, if applicable.
-- `private`: Whether the service is public or private (0 == public, 1 == private)
+- `privacy`: Whether the service is public or private (0 || "public", 1 || "private")
 - `state`: Status of the post, either "published", "draft", "submitted", or "queued".
 - `kind`: The type of post, either post, link, quote, comment, image, video, audio, or answer.
 - `format`: The format of your post content, either "plain", "html", "markdown", "textile", or any code (ruby, c, php, etc.).
@@ -57,12 +57,12 @@ Each service requires different things, which are determined by the `validates_p
 1. Microblogging (twitter, yahoo meme, google buzz, identica)
 2. Tumblelogging (tumblr, posterous)
 3. Blogging (large posts)
-4. Bookmarking
-5. Code Sharing (gist, snipplr, dzone snippets, pastie, snipt, pastebin)
+4. Bookmarking (delicious, diigo, mixx, newsvine, reddit, digg...)
+5. Code Sharing (gist, snipplr, dzone snippets, snipt)
 
 ## How it works
 
-Everything is built around [Mechanize](http://mechanize.rubyforge.org/mechanize/GUIDE_rdoc.html) and [Nokogiri](http://nokogiri.org/tutorials/parsing_an_html_xml_document.html), both led by [Aaron Patterson](http://tenderlovemaking.com/).
+Everything is built around [Mechanize](http://mechanize.rubyforge.org/mechanize/GUIDE_rdoc.html) and [Nokogiri](http://nokogiri.org/tutorials/parsing_an_html_xml_document.html), both led by [Aaron Patterson](http://tenderlovemaking.com/) (watch [Yehuda's "How to do the Impossible video"](http://www.youtube.com/watch?v=mo-lMdQMsdw)).
 
 Many social bookmarking services do not have API's in order to prevent spammers from ruining their system.  But what about for those of us that actually create content several times a day and want automation?  We're out of luck.
 

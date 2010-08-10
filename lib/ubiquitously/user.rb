@@ -63,9 +63,15 @@ module Ubiquitously
     end
     
     def has_cookie_for(service)
+      name = service_cookie_name(service.to_s)
       !self.agent.cookie_jar.jar.keys.detect do |domain|
-        domain.downcase =~ /#{service.to_s.gsub("_", "_?")}/
+        domain.downcase =~ /#{name}/
       end.blank?
+    end
+    
+    def service_cookie_name(service)
+      return service.gsub("_", "_?") unless service == "dzone_snippets"
+      return "dzone"
     end
   end
 end

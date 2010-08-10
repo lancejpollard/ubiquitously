@@ -41,14 +41,14 @@ module Ubiquitously
       
       attr_accessor :title, :url, :description, :tags, :categories
       # some sites check to see if you're posting duplicate content!
-      attr_accessor :image, :rating, :private, :vote, :status, :must_be_unique, :captcha
+      attr_accessor :image, :rating, :privacy, :vote, :status, :must_be_unique, :captcha
       attr_accessor :service_url, :user
       # the application that automates! ("Posted by TweetMeme")
       attr_accessor :source, :source_url
       # kind == regular, link, quote, photo, conversation, video, audio, answer
       attr_accessor :kind
       # plain, html, markdown
-      attr_accessor :format
+      attr_accessor :format, :extension
       # max 55 chars, for custom url if possible
       attr_accessor :slug
       # published, draft, submission, queue
@@ -59,7 +59,10 @@ module Ubiquitously
         
         raise 'please give me a user' if self.user.blank?
         
-        self.format ||= "plain"
+        self.format ||= "text"
+        self.privacy = 0 if self.privacy.nil?
+        self.categories ||= []
+        self.tags ||= []
         
         # for httparty
         @auth = {:username => user.username_for(self), :password => user.password_for(self)}
@@ -109,6 +112,14 @@ module Ubiquitously
           :tags => self.tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, " ").squeeze(" ") }.join(", "),
           :categories => self.categories.join(",")
         }
+      end
+      
+      def private?
+        privacy == 1 || privacy == "1" || privacy == "private"
+      end
+      
+      def public?
+        privacy == 0 || privacy == "0" || privacy == "public"
       end
       
       class << self

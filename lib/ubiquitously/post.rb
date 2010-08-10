@@ -1,6 +1,6 @@
 module Ubiquitously
   class Post
-    attr_accessor :url, :title, :description, :tags, :categories, :user, :page, :posts
+    attr_accessor :url, :title, :description, :tags, :categories, :user, :page, :posts, :format, :extension
 
     def initialize(attributes = {})
       attributes.each do |key, value|
@@ -39,7 +39,9 @@ module Ubiquitously
             :title => self.title,
             :description => self.description,
             :tags => self.tags,
-            :categories => self.categories
+            :categories => self.categories,
+            :format => self.format,
+            :extension => self.extension
           )
         end
       end.uniq
