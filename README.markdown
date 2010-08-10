@@ -111,6 +111,9 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - [http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/](http://www.doshdosh.com/a-comprehensive-guide-to-stumbleupon-how-to-build-massive-traffic-to-your-website-and-monetize-it/)
 - [http://www.thedesigncubicle.com/2009/12/websites-to-submit-your-design-articles-that-produce-heavy-traffic/](http://www.thedesigncubicle.com/2009/12/websites-to-submit-your-design-articles-that-produce-heavy-traffic/)
 - [http://www.warriorforum.com/](http://www.warriorforum.com/)
+- [http://lifehacker.com/5509815/how-to-declutter-and-streamline-your-google-reader-inbox](http://lifehacker.com/5509815/how-to-declutter-and-streamline-your-google-reader-inbox)
+- [http://www.netvibes.com/](http://www.netvibes.com/)
+- [http://www.noodlesoft.com/hazel.php](http://www.noodlesoft.com/hazel.php)
 
 > Linkbuilding is not a sprint... it is a MARATHON!
 
@@ -120,9 +123,12 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 ## Todo
 
+- if submission already exists (digg, dzone, reddit...), then make description a comment and digg it.
+- validations for each service (description wordcount, num tags, categories, title)
+- who can post (is it for just me or for other people)?
 - programmers_heaven, meta_filter, propeller, sharebrain, shoutwire, sphinn, stumpedia, web_blend, who_freelance, youblr, zabox
 - Find image on page for display
-- logging and tips
+- logging at stages in the process
 - addthis-like javascript bookmarking tool
 - flow:
   - content type: video, image, post, status

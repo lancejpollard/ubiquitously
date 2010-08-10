@@ -20,7 +20,7 @@ module Ubiquitously
       def save(options = {})
         return false unless valid?
         
-        unless options[:debug] == true || get
+        unless options[:debug] == true
           self.class.get(
             "/posts/add",
             :query => {

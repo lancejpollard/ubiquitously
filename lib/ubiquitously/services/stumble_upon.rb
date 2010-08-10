@@ -21,15 +21,18 @@ module Ubiquitously
     end
     
     class Post < Ubiquitously::Base::Post
+      submit_to "http://www.stumbleupon.com/submit?url=:url&title=:title"
+      
       def save(options = {})
         return false unless valid?
         
         authorize
         
-        page = agent.get("http://www.stumbleupon.com/submit?url=#{url}&title=#{title}")
+        page = agent.get("http://www.stumbleupon.com/favorites/")
+        File.open("stumble.html", "w+") {|f| f.puts page.parser.to_html}
         form = page.forms.first
-        form["topic"] = title
-        form["comment"] = description
+        form["url"] = url
+        form["review"] = description
         form.radiobuttons_with(:name => "sfw").first.check
         page = agent.submit(form)
         

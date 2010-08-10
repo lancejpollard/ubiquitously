@@ -5,7 +5,7 @@ module Ubiquitously
     
     class Post < Ubiquitously::Base::Post
       include HTTParty
-      base_uri 'http://posterous.com/api'
+      base_uri 'http://www.tumblr.com/api'
       validates_presence_of :url, :title, :description, :tags
       
       def save(options = {})
@@ -14,10 +14,10 @@ module Ubiquitously
         token = tokenize
         
         # type == regular, link, quote, photo, conversation, video, audio, answer
-        self.class.post("/newpost", {
-          :query => {
-            :email => user.username,
-            :password => user.password,
+        response = self.class.post("/write", {
+          :body => {
+            :email => user.username_for(self),
+            :password => user.password_for(self),
             :type => "link",
             :name => token[:title],
             :url => token[:url],

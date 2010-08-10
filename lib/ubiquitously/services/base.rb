@@ -41,6 +41,7 @@ module Ubiquitously
       
       attr_accessor :title, :url, :description, :tags, :categories
       # some sites check to see if you're posting duplicate content!
+      # perhaps "vote" can mean "favorite" also
       attr_accessor :image, :rating, :privacy, :vote, :status, :must_be_unique, :captcha
       attr_accessor :service_url, :user
       # the application that automates! ("Posted by TweetMeme")
