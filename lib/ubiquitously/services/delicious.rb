@@ -8,8 +8,14 @@ module Ubiquitously
     class Post < Ubiquitously::Base::Post
       include HTTParty
       base_uri 'https://api.del.icio.us/v1'
-      
       validates_presence_of :url, :title, :description, :tags
+      submit_to "http://del.icio.us/post/?url=:url&title=:title&notes=:description&tags=:tags"
+      
+      def tokenize
+        super.merge(
+          :tags => self.tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, "-").squeeze("-") }.join(" ")
+        )
+      end
       
       def save(options = {})
         return false unless valid?

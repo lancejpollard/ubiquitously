@@ -21,10 +21,10 @@ module Ubiquitously
     end
     
     class Post < Ubiquitously::Base::Post
-      def save
+      def save(options = {})
         return false unless valid?
         
-        user.login
+        authorize
         
         page = agent.get("http://www.stumbleupon.com/submit?url=#{url}&title=#{title}")
         form = page.forms.first

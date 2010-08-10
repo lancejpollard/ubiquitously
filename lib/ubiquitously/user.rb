@@ -1,6 +1,6 @@
 module Ubiquitously
   class User
-    attr_accessor :username, :cookies, :agent, :accounts, :cookies_path
+    attr_accessor :username, :cookies, :agent, :accounts, :cookies_path, :name, :email
     
     def initialize(attributes = {})
       attributes = attributes.symbolize_keys
@@ -64,7 +64,7 @@ module Ubiquitously
     
     def has_cookie_for(service)
       !self.agent.cookie_jar.jar.keys.detect do |domain|
-        domain.downcase =~ /#{service.to_s}/
+        domain.downcase =~ /#{service.to_s.gsub("_", "_?")}/
       end.blank?
     end
   end

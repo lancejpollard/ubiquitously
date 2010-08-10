@@ -21,6 +21,7 @@ module Ubiquitously
     
     class Post < Ubiquitously::Base::Post
       validates_presence_of :url, :title, :description
+      submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"
       
       def save(options = {})
         return false if !valid?# || new_record?
@@ -47,7 +48,6 @@ module Ubiquitously
         form["title"] = title
         form["body"] = description # 350 chars max
         form["topic"] = "26"
-        
         
         captcha_image = page.parser.css("img.captcha").first["src"]
         captcha_id    = page.parser.css("input#captchaid").first["value"]

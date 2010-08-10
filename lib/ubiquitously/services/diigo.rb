@@ -24,21 +24,29 @@ module Ubiquitously
     
     class Post < Ubiquitously::Base::Post
       validates_presence_of :url, :title, :description, :tags
+      submit_to "http://www.diigo.com/post?b_mode=0&c_mode=0&url=:url&title=:title&comments=:description&tag=:tags"
+      
+      # tags are space separated. Use " " for tag with multiple words.
+      def tokenize
+        super.merge(
+          :tags => tags.map { |tag| '"' + tag.downcase.strip.gsub(/[^a-z0-9]/, " ").squeeze(" ") + '"' }.join(" ")
+        )
+      end
       
       def save(options = {})
         return false if !valid? || new_record?
 
         authorize
         
+        token = tokenize
+        
         page = agent.get("https://secure.diigo.com/item/new/bookmark")
         form = page.form_with(:action => "/item/save/bookmark")
-        form["url"] = url
-        form["title"] = title
-        form["description"] = description
+        form["url"] = token[:url]
+        form["title"] = token[:title]
+        form["description"] = token[:description]
         # tags are space separated. Use " " for tag with multiple words.
-        form["tags"] = tags.map do |tag|
-          '"' + tag.downcase.strip.gsub(/[^a-z0-9]/, " ").squeeze(" ") + '"'
-        end.join(" ")
+        form["tags"] = token[:tags]
         
         unless options[:debug] == true
           page = form.submit

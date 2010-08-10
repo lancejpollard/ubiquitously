@@ -26,6 +26,7 @@ module Ubiquitously
     
     class Post < Ubiquitously::Base::Post
       validates_presence_of :url, :title, :description, :categories
+      submit_to "http://www.dzone.com/links/add.html?url=:url&title=:url&description=:description"
       
       class << self
         

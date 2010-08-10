@@ -25,6 +25,16 @@ class Hash
 end
 
 class Array
+  def chop(separator = "", max = 40)
+    result = []
+    self.each do |word|
+      break if (result.join(separator).length + word.length > max)
+      result << word 
+      result
+    end
+    result
+  end
+  
   def recursively_symbolize_keys!
     self.each do |item|
       if item.is_a? Hash

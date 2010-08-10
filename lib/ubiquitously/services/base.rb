@@ -25,6 +25,10 @@ module Ubiquitously
         super(attributes)
       end
       
+      def login
+        @logged_in ||= true
+      end
+      
       def logged_in?
         @logged_in == true
       end
@@ -36,13 +40,26 @@ module Ubiquitously
       include Ubiquitously::Resourceful
       
       attr_accessor :title, :url, :description, :tags, :categories
-      attr_accessor :image, :rating, :private, :vote, :status
+      # some sites check to see if you're posting duplicate content!
+      attr_accessor :image, :rating, :private, :vote, :status, :must_be_unique, :captcha
       attr_accessor :service_url, :user
+      # the application that automates! ("Posted by TweetMeme")
+      attr_accessor :source, :source_url
+      # kind == regular, link, quote, photo, conversation, video, audio, answer
+      attr_accessor :kind
+      # plain, html, markdown
+      attr_accessor :format
+      # max 55 chars, for custom url if possible
+      attr_accessor :slug
+      # published, draft, submission, queue
+      attr_accessor :state
       
       def initialize(attributes = {})
         super(attributes)
         
         raise 'please give me a user' if self.user.blank?
+        
+        self.format ||= "plain"
         
         # for httparty
         @auth = {:username => user.username_for(self), :password => user.password_for(self)}
@@ -80,7 +97,32 @@ module Ubiquitously
         self.class.url_permutations(url)
       end
       
+      def submit_url
+        self.class.submit_url(self)
+      end
+
+      def tokenize
+        {
+          :url => self.url,
+          :title => self.title,
+          :description => self.description,
+          :tags => self.tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, " ").squeeze(" ") }.join(", "),
+          :categories => self.categories.join(",")
+        }
+      end
+      
       class << self
+        def submit_to(url = nil)
+          @submit_to = url if url
+          @submit_to
+        end
+
+        def submit_url(post)
+          post.tokenize.inject(submit_to) do |result, token|
+            result.gsub(/:#{token.first}/, token.last)
+          end
+        end
+        
         def create(options = {})
           record = new(options)
           record.save
