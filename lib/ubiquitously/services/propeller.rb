@@ -61,7 +61,7 @@ module Ubiquitously
         unless options[:debug] == true
           page = form.submit
         end
-
+        
         true
       end
     end

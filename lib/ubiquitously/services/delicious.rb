@@ -32,6 +32,8 @@ module Ubiquitously
             :basic_auth => @auth
           )
         end
+        
+        true
       end
       
       def find(options = {})

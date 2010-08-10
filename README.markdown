@@ -120,6 +120,7 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 ## Todo
 
+- programmers_heaven, meta_filter, propeller, sharebrain, shoutwire, sphinn, stumpedia, web_blend, who_freelance, youblr, zabox
 - Find image on page for display
 - logging and tips
 - addthis-like javascript bookmarking tool
@@ -132,3 +133,6 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - handle captchas
 - if this is actually useful, maybe creating accounts programmatically
 - optimize login, i could probably skip the entire "parse form" section and just do a raw post.
+- I don't want to support _every_ service because most of them are spammy or are not used much lately.  Let's keep it clean here.  Some services are also invite only and are in very very specific niches outside my realm.  If you would like to support them, feel free to fork and customize.
+
+<cite>copyright @viatropos 2010</cite>
