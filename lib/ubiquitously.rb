@@ -19,6 +19,7 @@ module Ubiquitously
   class SettingsError < StandardError; end
   class AuthenticationError < StandardError; end
   class DuplicateError < StandardError; end
+  class RecordInvalid < StandardError; end
 
   class << self
     attr_accessor :config

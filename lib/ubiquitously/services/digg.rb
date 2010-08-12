@@ -1,3 +1,4 @@
+# digg now uses oauth, so switch when we have oauth through terminal
 module Ubiquitously
   module Digg
     class Account < Ubiquitously::Base::Account
@@ -23,11 +24,8 @@ module Ubiquitously
       validates_presence_of :url, :title, :description
       submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"
       
-      def save(options = {})
-        return false if !valid?# || new_record?
-        
-        authorize
-        
+      def create(options = {})
+        super
         # url
         page        = agent.get("http://digg.com/submit/")
         form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
@@ -81,8 +79,83 @@ module Ubiquitously
         true
       end
       
-      def new_record?
-        self.class.new_record?(url)
+      def update(options = {})
+        super
+        token = nil
+        page = agent.get(remote.service_url)
+        page.parser.css("script").each do |script|
+          if script["src"] =~ /http:\/\/digg\.com\/dynjs\/loader/
+            token = agent.get(script["src"]).body.match(/tokens\.digg\.perform\s+=\s+"([^"]+)"/)[1]
+          end
+        end
+        location = page.body.match(/D\.meta\.page\.type\s+=\s+"([^"]+)"/)[1]
+        headers = {
+          "X-Requested-With" => "XMLHttpRequest",
+          "Accept" => "application/json, text/javascript",
+          "Content-Type" => "application/x-www-form-urlencoded; charset=UTF-8",
+          "Pragma" => "no-cache",
+          "Cache-Control" => "no-cache",
+          "Accept-Encoding" => "gzip,deflate",
+          "Referer" => self.remote.service_url
+        }
+        params = {
+          "location" => location,
+          "token" => token,
+          "itemid" => remote.service_id
+        }#.inject([]) { |array, (k, v)| array << "#{k}=#{v}"; array }.join("&")
+        string = params.inject([]) { |array, (k, v)| array << "#{k}=#{v}"; array }.join("&")
+        begin
+          page = agent.post("http://digg.com/ajax/digg/perform", params, headers)
+        rescue Exception => e
+          puts e.page.body
+        end
+        
+        true
+      end
+      
+      class << self
+        def find(options = {})
+          url = options[:url]
+          raise ArgumentError.new("Please give #{service_name} a url") if url.blank?
+          urls = url_permutations(options[:url])
+          user = options[:user]
+          records = []
+          # search = "http://services.digg.com/1.0/endpoint?method=search.stories&query=#{url}"
+          link = "http://services.digg.com/1.0/endpoint?method=story.getAll&link=#{url}"
+          
+          xml = Nokogiri::XML(user.agent.get(link).body)
+          
+          xml.css("story").each do |node|
+            service_url = node["href"]
+            service_id  = node["id"]
+            url         = node["link"]
+            votes       = node["diggs"].to_i
+            title       = node.css("title").first.text
+            description = node.css("description").first.text
+            categories  = [node.css("container").first["name"]] rescue []
+            categories  << node.css("topic").first["name"] rescue nil
+            categories.flatten!
+            record = new(
+              :title => title,
+              :url => url,
+              :description => description,
+              :categories => categories,
+              :service_url => service_url,
+              :service_id  => service_id,
+              :votes => votes,
+              :user => user
+            )
+            records << record if urls.include?(record.url)
+          end
+          
+          records.sort! { |a, b| b.votes <=> a.votes }
+          
+          if options[:url]
+            records.first
+          else
+            records
+          end
+        end
       end
     end
   end

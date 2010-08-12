@@ -27,9 +27,7 @@ module Ubiquitously
         super.merge(
           :description => "<code>#{self.description}</code>",
           :tags => tags.map do |tag|
-            tag.downcase.strip.gsub(/[^a-z0-9]/, " ").squeeze(" ")
-          end.map do |tag|
-            (tag =~ /\s+/).nil? ? tag : "\"#{tag}\"" 
+            tag.downcase.strip.gsub(/[^a-z0-9]/, "-").squeeze("-")
           end.join(" ")
         )
       end
@@ -42,14 +40,15 @@ module Ubiquitously
         
         page = agent.get("http://snippets.dzone.com/")
         form = page.form_with(:action => "/posts/create")
-        
+
         form["post[title]"] = token[:title]
         form["post[content]"] = token[:description]
         form["post[tag_list]"] = token[:tags]
         
         form["post[private]"] = 1 if private?
-        
         page = form.submit
+        
+        File.open("dzone_snip.html", "w+") {|f| f.puts page.body}
         
         true
       end

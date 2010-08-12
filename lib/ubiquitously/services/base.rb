@@ -39,11 +39,11 @@ module Ubiquitously
       include ActiveModel::Serialization
       include Ubiquitously::Resourceful
       
-      attr_accessor :title, :url, :description, :tags, :categories
+      attr_accessor :title, :url, :description, :tags, :categories, :remote, :service_id, :votes
       # some sites check to see if you're posting duplicate content!
       # perhaps "vote" can mean "favorite" also
       attr_accessor :image, :rating, :privacy, :vote, :status, :must_be_unique, :captcha
-      attr_accessor :service_url, :user
+      attr_accessor :service_url, :user, :upvotes, :downvotes
       # the application that automates! ("Posted by TweetMeme")
       attr_accessor :source, :source_url
       # kind == regular, link, quote, photo, conversation, video, audio, answer
@@ -64,6 +64,8 @@ module Ubiquitously
         self.privacy = 0 if self.privacy.nil?
         self.categories ||= []
         self.tags ||= []
+        self.upvotes ||= 0
+        self.downvotes ||= 0
         
         # for httparty
         @auth = {:username => user.username_for(self), :password => user.password_for(self)}
@@ -90,11 +92,36 @@ module Ubiquitously
       end
       
       def get
-        self.class.find(:url => self.url, :user => self.user)
+        self.remote ||= self.class.find(:url => self.url, :user => self.user)
+        puts "REMOTE: #{self.remote.inspect}"
+        self.remote
+      end
+      
+      def save(options = {})
+        puts "VALID? #{valid?.inspect}, #{errors.full_messages}"
+        return false unless valid?
+        authorize
+        new_record? ? create(options) : update(options)
+      end
+      
+      def save!(options = {})
+        result = save(options)
+        unless result
+          raise Ubiquitously::RecordInvalid.new("Record is invalid: #{self.errors.full_messages}") unless valid?
+        end
+        result 
+      end
+      
+      def create(options = {})
+        authorize        
+      end
+      
+      def update(options = {})
+        authorize
       end
       
       def new_record?
-        !self.get.blank?
+        self.get.blank?
       end
       
       def url_permutations(url)
@@ -104,7 +131,7 @@ module Ubiquitously
       def submit_url
         self.class.submit_url(self)
       end
-
+      
       def tokenize
         {
           :url => self.url,
@@ -143,7 +170,22 @@ module Ubiquitously
         
         # with and without trailing slash, in case we saved it as one over the other
         def url_permutations(url)
-          [url.gsub(/\/$/, ""), url.gsub(/\/$/, "") + "/"]
+          url, params = url.split("?")
+          # without_trailing_slash, with www
+          a = url.gsub(/\/$/, "").gsub(/http(s)?:\/\/([^\/]+)/) do |match|
+            protocol = "http#{$1.to_s}"
+            domain = $2
+            domain = "www.#{domain}" if domain.split(".").length < 3 # www.google.com == 3, google.com == 2
+            "#{protocol}://#{domain}"
+          end
+          # with_trailing_slash, with www
+          b = "#{a}/"
+          # without_trailing_slash, without www
+          c = a.gsub(/http(s)?:\/\/www\./, "http#{$1.to_s}://")
+          # with_trailing_slash, without www
+          d = "#{c}/"
+          
+          [a, b, c, d].map { |url| "#{url}?#{params}".gsub(/\?$/, "") }
         end
       end
     end

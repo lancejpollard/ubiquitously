@@ -21,8 +21,8 @@ module Ubiquitously
       postables(*services).map { |post| post.save(options) }
     end
     
-    def new_record?(*services, &block)
-      postables(*services).select do |post|
+    def new_record?(service, &block)
+      postables(*service).detect do |post|
         post.new_record?
       end
     end
