@@ -58,7 +58,7 @@ Each service requires different things, which are determined by the `validates_p
 2. Tumblelogging (tumblr, posterous)
 3. Blogging (large posts)
 4. Bookmarking (delicious, diigo, mixx, newsvine, reddit, digg...)
-5. Code Sharing (gist, snipplr, dzone snippets, snipt)
+5. Code Sharing (gist, snipplr, dzone snippets, snipt, flikode)
 
 ## How it works
 
@@ -74,19 +74,21 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 ## What you should be doing...
 
-### Writing Tutorials
-
 ### Posting in Forums
 
 - Comment in the forums
 
 ### Adding to Article Directories
 
+- Delicious
+
 ### Guest Posting
+
+- Envato
 
 ### Publishing Documents
 
-- scribd
+- Scribd
 
 ### Contributing Code
 
@@ -97,10 +99,22 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - Share others' content to stumbleupon, delicious, digg, diigo, reddit, tumblr, twitter, mixx, and identica.
 - Tag other's posts on stumbleupon, delicious, digg, diigo, and reddit.
 - Stumble other peoples posts that link to you.  You'll benefit them and yourself.
+- Write 2-3 sentences to describe each thing you post.  So if you can share 10 things a day, that's 20-30 sentences.
 
 ### Commenting on Blogs
 
 - Comment on other people's blogs
+
+## What you should _not_ be doing...
+
+### Self Promoting
+
+- Only posting your content, you will get banned from the sites.
+
+### Spamming
+
+- Posting just the default description to all the sites
+- Posting too much
 
 ## Tips and Resources
 
@@ -114,6 +128,15 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - [http://lifehacker.com/5509815/how-to-declutter-and-streamline-your-google-reader-inbox](http://lifehacker.com/5509815/how-to-declutter-and-streamline-your-google-reader-inbox)
 - [http://www.netvibes.com/](http://www.netvibes.com/)
 - [http://www.noodlesoft.com/hazel.php](http://www.noodlesoft.com/hazel.php)
+- [http://www.webdesignerdepot.com/2010/07/30-places-to-submit-your-website-designs/](http://www.webdesignerdepot.com/2010/07/30-places-to-submit-your-website-designs/)
+- [http://knowem.com/](http://knowem.com/)
+- [hriscredendino.com/](hriscredendino.com/)
+- [http://www.networkworld.com/news/2010/080210-social-media-sucks-up-23.html](http://www.networkworld.com/news/2010/080210-social-media-sucks-up-23.html)
+- [http://opensource.newscloud.com](http://opensource.newscloud.com)
+- [http://www.doshdosh.com/list-of-social-media-news-websites/](http://www.doshdosh.com/list-of-social-media-news-websites/)
+- [http://popurls.com/](http://popurls.com/)
+- [http://www.webdesignerdepot.com/2010/07/30-places-to-submit-your-website-designs/](http://www.webdesignerdepot.com/2010/07/30-places-to-submit-your-website-designs/)
+- [http://www.shareaholic.com/](http://www.shareaholic.com/)
 
 > Linkbuilding is not a sprint... it is a MARATHON!
 
@@ -123,6 +146,8 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 ## Todo
 
+- find most appropriate tags for each service
+- slideshare
 - if submission already exists (digg, dzone, reddit...), then make description a comment and digg it.
 - validations for each service (description wordcount, num tags, categories, title)
 - who can post (is it for just me or for other people)?
@@ -142,3 +167,53 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - I don't want to support _every_ service because most of them are spammy or are not used much lately.  Let's keep it clean here.  Some services are also invite only and are in very very specific niches outside my realm.  If you would like to support them, feel free to fork and customize.
 
 <cite>copyright @viatropos 2010</cite>
+
+## Tags
+
+Programming, Ruby, Rails, Development, textmate (911)javascript (791)css (747)php (729)jquery (452)html (384)Bash (316)mysql (298)ruby (294)python (291)String (244)wordpress (242)array (208)sql (186)image (174)rails (172)java (167)drupal (166)file (165)actionscript (162)
+
+- http://www.noupe.com/
+- mashable
+- smashing-magazine
+- tripwire
+- http://www.instantshift.com/user-submitted-news/
+- http://designm.ag/submit-news/
+- http://speckyboy.com/designnews/design-news-submission-form/
+- http://net.tutsplus.com/link-feed/#add
+- http://qik.com/
+- http://www.associatedcontent.com/
+- http://inboundmarketing.com
+- http://clipmarks.com
+- http://www.addurl.nu/
+- http://blog.sponsoredreviews.com/?p=47
+- http://www.metamags.com/
+- http://www.developersniche.com/
+- http://add.io/
+- http://www.arto.com/section/frontpage/
+- https://www.google.com/bookmarks/l
+- amazon wishlist
+- netvibes
+- evernote
+- http://www.evri.com/
+- http://pinboard.in
+- http://weheartit.com/about
+- http://www.soup.io/
+- http://izeby.com/
+- http://linkmarking.com/
+- yahoo meme
+- reddit, digg, diigo, and mixx still don't work
+- diigo doesn't work because cookie expires.  create mechanize to re-login if cookie doesn't work
+
+## Lists
+
+- http://www.digalist.com
+- listiki.com
+- tipbo.com
+
+There a whole bunch of social websites online which allow you to insert a link to your website on the profile page. Sign up for some of them, preferably using a username and avatar that brands your business or you as a person. This might come in useful when you decide to promote your site via the social website in the future.
+
+Ask yourself the following questions about the linkability of your content:
+
+- Am I Digging this because I want others to see it, and pressing a single button is an easy way for me to say "this is cool?"
+- Or am I Digging this because People need to know about this, because they can't live without it or because without it they would be out of the loop.
+- Is it possible that my information is so new and/or informative that I will actually become an authority on this information, or serve as a reference for others interested in writing about similar content?
