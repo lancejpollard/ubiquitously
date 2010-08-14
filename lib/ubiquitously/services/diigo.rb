@@ -4,13 +4,11 @@ module Ubiquitously
       
       def login
         return true if logged_in?
-        
-        page = agent.get("https://secure.diigo.com/sign-in?referInfo=http://www.diigo.com")
+        page = agent.get("https://secure.diigo.com/sign-in")
         form = page.form_with(:name => "loginForm")
         form["username"] = username
         form["password"] = password
         page = form.submit
-        
         @logged_in = (page.title =~ /Sign in/i).nil?
         
         unless @logged_in
@@ -33,15 +31,13 @@ module Ubiquitously
         )
       end
       
-      def save(options = {})
-        return false if !valid? || new_record?
-
-        authorize
+      def create(options = {})
+        super
         
         token = tokenize
         
         page = agent.get("https://secure.diigo.com/item/new/bookmark")
-        form = page.form_with(:action => "/item/save/bookmark")
+        form = page.forms.detect { |form| form.form_node["id"] == "newBookmarkForm" }
         form["url"] = token[:url]
         form["title"] = token[:title]
         form["description"] = token[:description]

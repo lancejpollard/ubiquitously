@@ -32,7 +32,7 @@ module Ubiquitously
         page        = agent.get("http://www.propeller.com/story/submit/")
         form        = page.forms.detect {|form| form.form_node["method"].downcase == "post"}
         form["url"] = url
-
+        
         puts form.inspect
         # details
         # http://www.propeller.com/story/submit/content/
@@ -54,7 +54,7 @@ module Ubiquitously
         
         # http://www.propeller.com/story/submit/preview/
         page = form.submit
-        puts "SUBMIT DETAILS"
+
         # approve
         page.forms[1].submit
         

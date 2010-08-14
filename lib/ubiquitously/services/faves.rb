@@ -25,7 +25,6 @@ module Ubiquitously
       validates_presence_of :url, :title, :description, :tags
       
       def save(options = {})
-        puts 'saving faves'
         return false unless valid?
         authorize
         

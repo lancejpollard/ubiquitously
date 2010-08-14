@@ -137,8 +137,8 @@ module Ubiquitously
           :url => self.url,
           :title => self.title,
           :description => self.description,
-          :tags => self.tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, " ").squeeze(" ") }.join(", "),
-          :categories => self.categories.join(",")
+          :tags => self.tags.map { |tag| tag.downcase.gsub(/[^a-z0-9\.]/, " ").squeeze(" ") }.join(", "),
+          :categories => self.categories.map { |tag| tag.downcase.gsub(/[^a-z0-9\.]/, " ").squeeze(" ") }
         }
       end
       

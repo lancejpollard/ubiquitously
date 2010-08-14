@@ -77,7 +77,7 @@ module Ubiquitously
         form["recaptcha_challenge_field"] = captcha_response
         form["recaptcha_response_field"] = "manual_challenge"
         page = form.submit
-        File.open("favshare.html", "w+") {|f| f.puts page.parser.to_html}
+
         unless options[:debug] == true
           form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
           page = form.submit

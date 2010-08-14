@@ -27,6 +27,7 @@ module Ubiquitously
       
       def create(options = {})
         super
+        token = tokenize
         # url
         page        = agent.get("http://www.dzone.com/links/add.html")
         form        = page.form_with(:action => "/links/add.html")
@@ -37,7 +38,7 @@ module Ubiquitously
           accepted_tags << tag.value.to_s
         end
         
-        unaccepted_tags = categories.select { |tag| !accepted_tags.include?(tag) }
+        unaccepted_tags = token[:categories].select { |tag| !accepted_tags.include?(tag) }
         
         if unaccepted_tags.length > 0
           raise ArgumentError.new("DZone doesn't accept these tags: #{unaccepted_tags.inspect}, they want these:\n#{accepted_tags.inspect}")
@@ -48,7 +49,7 @@ module Ubiquitously
         form["description"] = description
         
         form.checkboxes_with(:name => "tags").each do |checkbox|
-          checkbox.check if categories.include?(checkbox.value)
+          checkbox.check if token[:categories].include?(checkbox.value)
         end
         
         unless options[:debug] == true

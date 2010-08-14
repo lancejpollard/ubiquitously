@@ -4,13 +4,13 @@ module Ubiquitously
       def login
         return true if logged_in?
         
-        page = agent.get("http://digzign.com/login")
-        form = page.form_with(:name => "loginform")
+        page = agent.get("http://flikode.com/login")
+        form = page.form_with(:name => "login")
         form["username"] = username
         form["password"] = password
         page = form.submit
         
-        @logged_in = !(page.title =~ /Like Digg/i).nil?
+        @logged_in = page.uri != "http://flikode.com/login"
         
         unless @logged_in
           raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
@@ -22,11 +22,29 @@ module Ubiquitously
     
     class Post < Ubiquitously::Base::Post
       def save(options = {})
-        return false if !valid?
+        return false unless valid?
         
         authorize
+        token = tokenize
         
-        page = agent.get("")
+        page = agent.get("http://flikode.com/snippet")
+        form = page.form_with(:name => "snippet")
+        
+        form["title"] = token[:title]
+        form["description"] = token[:description]
+        form["tags"] = token[:tags]
+        
+        form.field_with(:name => "language").options.each do |option|
+          option.select if option.text.to_s.strip.downcase =~ /#{format}/
+        end
+        
+        form.radiobuttons_with(:name => "choose").last.check
+        
+        form["snippet"] = token[:body]
+        
+        page = form.submit
+        
+        true
       end
     end
   end
