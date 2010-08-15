@@ -46,10 +46,10 @@ module Ubiquitously
     
     def account_for(service)
       unless service.is_a?(String)
-        service = service.service_name
+        service = service.service
       end
       login(service)
-      self.accounts.detect { |account| account.service_name == service }
+      self.accounts.detect { |account| account.service == service }
     end
     
     def load_cookies(path = self.cookies_path)

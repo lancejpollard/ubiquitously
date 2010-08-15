@@ -11,7 +11,7 @@ module Ubiquitously
         form["btnsubmit"] = "LOGIN"
         page = form.submit
         
-        authorized?(page.uri != "http://snipplr.com/login/")
+        authorize!(page.uri != "http://snipplr.com/login/")
       end
     end
     

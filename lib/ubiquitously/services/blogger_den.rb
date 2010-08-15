@@ -2,40 +2,25 @@ module Ubiquitously
   module BloggerDen
     class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-
         page = agent.get("http://www.bloggerden.com/login")
         form = page.forms.detect {|form| form.form_node["id"] == "thisform"}
         form["username"] = username
         form["password"] = password
         page = form.submit
-        @logged_in = !(page.title =~ /Like Digg/i).nil?
         
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.title =~ /Like Digg/i)
       end
     end
     
     class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title, :description
       # title max length == 120
       submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"
       
       def tokenize
-        super.merge(
-          :title => self.title[0..120],
-          :tags => self.tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, " ").squeeze(" ") }.join(", ")
-        )
+        super.merge(:title => self.title[0..120])
       end
       
-      def save(options = {})
-        return false if !valid?# || new_record?
-        
-        authorize
-        
+      def create
         # url
         page        = agent.get("http://www.bloggerden.com/submit/")
         form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
@@ -71,16 +56,12 @@ module Ubiquitously
         form["recaptcha_response_field"] = "manual_challenge"
         
         page = form.submit
-        unless options[:debug] == true
+        unless debug?
           form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
           page = form.submit
         end
         # has captcha, not done with this
         true
-      end
-      
-      def new_record?
-        self.class.new_record?(url)
       end
     end
   end

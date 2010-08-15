@@ -9,20 +9,12 @@ module Ubiquitously
         form["submit"]      = "sign in" # require to get around the ajax
         page                = form.submit
 
-        @logged_in = (page.body =~ /Invalid member name or password/i).nil? && (page.body =~ /ajax-form/).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorize!((page.body !~ /Invalid member name or password/i) && (page.body !~ /ajax-form/))
       end
     end
     
     class Post < Ubiquitously::Service::Post
       # title max == 150
-      validates_presence_of :url, :title, :tags, :description
-      
       def tokenize
         super.merge(:tags => tags.taggify("_", " "))
       end

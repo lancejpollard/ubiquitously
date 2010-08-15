@@ -1,13 +1,16 @@
 module Ubiquitously
-  module Post
-    module Restful
+  module Restful
+    module Post
       def self.included(base)
         base.extend ClassMethods
+        base.restful
         base.send :include, InstanceMethods
       end
     
       module ClassMethods
-        subclassable_callbacks :create, :update, :save, :destroy
+        def restful
+          subclassable_callbacks :create, :update, :destroy
+        end
       
         def create(attributes = {})
           record = new(attributes)
@@ -24,22 +27,22 @@ module Ubiquitously
     
       module InstanceMethods
       
-        def _save
+        def save
           create_or_update
         end
-      
+        
         def create_or_update
           new_record? ? create : update
         end
-      
+        
         def save!
-          save || raise Ubiquitously::RecordInvalid.new("Record is invalid: #{self.errors.full_messages}")
+          save || raise(Ubiquitously::RecordInvalid.new("Record is invalid: #{self.errors.full_messages}"))
         end
-      
+        
         def remote
           @remote ||= self.class.find(:url => self.url, :user => self.user)
         end
-      
+        
         def new_record?
           remote.blank?
         end

@@ -9,16 +9,14 @@ module Ubiquitously
         form["_acegi_security_remember_me"] = "on"
         page = form.submit
         
-        authorized? (page.body =~ /Invalid username or password/i).nil?
+        authorize!(page.body !~ /Invalid username or password/i)
       end
     end
     
     class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title, :description, :categories
       submit_to "http://www.dzone.com/links/add.html?url=:url&title=:url&description=:description"      
       
       def create
-        token = tokenize
         # url
         page        = agent.get("http://www.dzone.com/links/add.html")
         form        = page.form_with(:action => "/links/add.html")
@@ -58,7 +56,6 @@ module Ubiquitously
         # var random = Math.floor(Math.random() * 10001);
         # var id = (random + "_" + new Date().getTime()).toString();
         # => 9031_1281646074042
-        # => 5155_1281650444000
         js_time = (Time.now.utc - Time.utc(1970, 1, 1)).floor * 1000
         params << "c0-id=#{rand(10001).to_s}_#{js_time.to_s}\n"
         params << "c0-param0=number:#{remote.service_id}\n"

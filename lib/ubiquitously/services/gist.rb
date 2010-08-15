@@ -8,12 +8,12 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        authorized? !(page.uri == "https://gist.github.com/session")
+        authorize!(page.uri != "https://gist.github.com/session")
       end
     end
     
     class Post < Ubiquitously::Service::Post
-      validates_presence_of :title, :description, :format, :extension
+      validates_presence_of :format, :extension
       
       def tokenize
         super.merge(
@@ -23,8 +23,6 @@ module Ubiquitously
       end
       
       def create
-        token = tokenize
-        
         page = agent.get("http://gist.github.com/")
         form = page.form_with(:action => "/gists")
         

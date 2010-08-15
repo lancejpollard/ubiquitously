@@ -1,9 +1,6 @@
 module Ubiquitously
   module ScriptAndStyle
     class Account < Ubiquitously::Service::Account
-      def login
-        return true # no login
-      end
     end
     
     class Post < Ubiquitously::Service::Post

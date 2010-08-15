@@ -2,21 +2,13 @@ module Ubiquitously
   module DesignBump
     class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://designbump.com/login")
         form = page.forms.detect { |form| form.form_node["id"] == "user-login-form" }
         form["name"] = username
         form["pass"] = password
         page = form.submit
         
-        @logged_in = page.uri != "http://designbump.com/user?destination=login"
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorize!(page.uri != "http://designbump.com/user?destination=login")
       end
     end
     
@@ -27,12 +19,7 @@ module Ubiquitously
         super.merge(:tags => tags.taggify(" ", :quote => true))
       end
       
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        token = tokenize
-        
+      def create
         page = agent.get("http://designbump.com/submit")
         form = page.form_with(:action => "/submit")
         

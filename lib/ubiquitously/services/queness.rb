@@ -9,7 +9,7 @@ module Ubiquitously
         form.checkboxes.first.check
         page = form.submit
 
-        authorized?(page.parser.css(".error").text !~ /Incorrect/i)
+        authorize!(page.parser.css(".error").text !~ /Incorrect/i)
       end
     end
     

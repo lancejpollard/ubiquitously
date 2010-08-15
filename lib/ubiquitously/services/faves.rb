@@ -9,13 +9,11 @@ module Ubiquitously
         form["action"] = "Sign In"
         page = form.submit
         
-        authorized? (page.title =~ /Sign In/i).nil?
+        authorize!(page.title !~ /Sign In/i)
       end
     end
     
-    class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title, :description, :tags
-      
+    class Post < Ubiquitously::Service::Post      
       def create
         page = agent.get("http://faves.com/createdot.aspx")
         form = page.form_with(:name => "createDotForm")

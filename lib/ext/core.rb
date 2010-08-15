@@ -1,3 +1,30 @@
+# thanks to the answer here:
+# http://stackoverflow.com/questions/3488203/how-do-i-see-where-in-the-class-hierarchy-a-method-was-defined-and-overridden-in
+class Object
+  def self.overridden_methods(parent_class = Object, within_tree = true)
+    if within_tree
+      defined_methods = ancestors[0..ancestors.index(parent_class) - 1].map { |object| object.instance_methods(false) }.flatten.uniq
+      parent_methods = superclass.instance_methods
+    else
+      defined_methods = instance_methods(false)
+      parent_methods = parent_class.instance_methods
+    end
+    defined_methods & parent_methods
+  end
+  
+  def overridden_methods(parent_class = Object, within_tree = true)
+    self.class.overridden_methods(parent_class, within_tree)
+  end
+  
+  def self.overrides?(method, parent_class = Object, within_tree = true)
+    overridden_methods(parent_class, within_tree).include?(method.to_s)
+  end
+  
+  def overrides?(method, parent_class = Object, within_tree = true)
+    self.class.overrides?(method, parent_class, within_tree)
+  end
+end
+
 class Hash
   def recursively_symbolize_keys!
     self.symbolize_keys!

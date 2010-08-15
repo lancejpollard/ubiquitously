@@ -6,16 +6,13 @@ module Ubiquitously
     class Post < Ubiquitously::Service::Post
       include HTTParty
       base_uri 'https://api.del.icio.us/v1'
-      validates_presence_of :url, :title, :description, :tags
       submit_to "http://del.icio.us/post/?url=:url&title=:title&notes=:description&tags=:tags"
       
       def tokenize
         super.merge(:tags => tags.taggify("-", " "))
       end
       
-      def save(options = {})
-        return false unless valid?
-        
+      def create
         unless debug?
           self.class.get(
             "/posts/add",
@@ -32,11 +29,7 @@ module Ubiquitously
         true
       end
       
-      def find(options = {})
-        self.class.find(:query => options, :basic_auth => @auth)
-      end
-      
-      def get(options = {})
+      def remote(options = {})
         raise "what url to do want" if self.url.nil?
         self.class.find(options.merge(
           :query => {

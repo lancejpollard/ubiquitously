@@ -1,6 +1,6 @@
 module Ubiquitously
   module Shoutwire
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         page = agent.get("http://shoutwire.com/login")
         form = page.form_with(:name => "TemplateMainForm")
@@ -8,13 +8,11 @@ module Ubiquitously
         form["ctl06$Password"] = password
         page = form.submit
         
-        authorized?(page.url.downcase != "http://shoutwire.com/login")
+        authorize!(page.url.downcase != "http://shoutwire.com/login")
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      validates_presence_of :url, :title, :description, :tags
-      
+    class Post < Ubiquitously::Service::Post      
       def create
         page = agent.get("http://shoutwire.com/submit")
         form = page.form_with(:name => "TemplateMainForm")

@@ -2,21 +2,18 @@ module Ubiquitously
   module Mixx
     class Account < Ubiquitously::Service::Account
       def login
-        
         page = agent.get("https://www.mixx.com/")
         form = page.form_with(:action => "https://www.mixx.com/save_login")
         form["user[loginid]"] = username
         form["user[password]"] = password
         page = form.submit
 
-        authorized?((page.body =~ /login was unsuccessful/i).nil?)
+        authorize!(page.body !~ /login was unsuccessful/i)
       end
     end
     
     class Post < Ubiquitously::Service::Post
       def create
-        token = tokenize
-        
         page = agent.get("http://www.mixx.com/submit")
         form = page.form_with(:action => "http://www.mixx.com/submit/step2")
         form["thingy[page_url]"] = token[:url]

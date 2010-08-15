@@ -6,7 +6,6 @@ module Ubiquitously
     class Post < Ubiquitously::Service::Post
       include HTTParty
       base_uri 'http://posterous.com/api'
-      validates_presence_of :url, :title, :description, :tags
       
       def create
         self.class.post("/newpost", {

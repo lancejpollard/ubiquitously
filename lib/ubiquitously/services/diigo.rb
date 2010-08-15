@@ -9,7 +9,7 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        authorized? (page.title =~ /Sign in/i).nil?
+        authorize!(page.title !~ /Sign in/i)
       end
       
     end
@@ -24,8 +24,6 @@ module Ubiquitously
       end
       
       def create
-        token = tokenize
-        
         page = agent.get("https://secure.diigo.com/item/new/bookmark")
         form = page.forms.detect { |form| form.form_node["id"] == "newBookmarkForm" }
         form["url"] = token[:url]

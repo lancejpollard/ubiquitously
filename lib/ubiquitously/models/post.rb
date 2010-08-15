@@ -15,7 +15,7 @@ module Ubiquitously
     # create or update
     def save(*services)
       options = services.extract_options!
-      postables(*services).map { |post| post.save(options) }
+      postables(*services).map { |post| post.save }
     end
     
     def new_record?(service, &block)
@@ -27,7 +27,7 @@ module Ubiquitously
     def postables(*services)
       services = services.flatten.map(&:to_sym)
       result = services.map do |service|
-        if service.is_a?(Ubiquitously::Base::Post)
+        if service.is_a?(Ubiquitously::Service::Post)
           service
         else
           "Ubiquitously::#{service.to_s.camelize}::Post".constantize.new(
@@ -45,7 +45,7 @@ module Ubiquitously
       
       self.posts = self.posts.concat(result)
       
-      self.posts.select { |post| services.include?(post.service_name.to_sym) }
+      self.posts.select { |post| services.include?(post.service.to_sym) }
     end
     
     Ubiquitously.services.each do |service|

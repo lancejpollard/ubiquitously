@@ -8,8 +8,7 @@ module Ubiquitously
         form["passwd"] = password
         page = form.submit
         
-        # No match. Please try again        
-        authorized?(page.title.to_s !~ /^Sign in/i)
+        authorize!(page.title.to_s !~ /^Sign in/i)
       end
     end
     

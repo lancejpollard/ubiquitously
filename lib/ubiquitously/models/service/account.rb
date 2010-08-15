@@ -13,8 +13,8 @@ module Ubiquitously
       def initialize(attributes = {})
         attributes = attributes.symbolize_keys
         
-        attributes[:username] ||= Ubiquitously.key("#{service_name}.key")
-        attributes[:password] ||= Ubiquitously.key("#{service_name}.secret")
+        attributes[:username] ||= Ubiquitously.key("#{service}.key")
+        attributes[:password] ||= Ubiquitously.key("#{service}.secret")
         unless attributes[:agent]
           attributes[:agent] = Mechanize.new
           #attributes[:agent].log = Logger.new(STDOUT)

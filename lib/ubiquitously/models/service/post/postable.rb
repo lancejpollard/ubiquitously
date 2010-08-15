@@ -1,28 +1,13 @@
 module Ubiquitously
-  module Post
-    module Postable
+  module Postable
+    module Post
       def self.included(base)
         base.extend ClassMethods
         base.send :include, InstanceMethods
       end
     
-      module ClassMethods      
-        attr_accessor :title, :url, :description, :tags, :categories, :remote, :service_id, :votes
-        # some sites check to see if you're posting duplicate content!
-        # perhaps "vote" can mean "favorite" also
-        attr_accessor :image, :rating, :privacy, :vote, :status, :must_be_unique, :captcha
-        attr_accessor :service_url, :user, :upvotes, :downvotes
-        # the application that automates! ("Posted by TweetMeme")
-        attr_accessor :source, :source_url
-        # kind == regular, link, quote, photo, conversation, video, audio, answer
-        attr_accessor :kind
-        # plain, html, markdown
-        attr_accessor :format, :extension
-        # max 55 chars, for custom url if possible
-        attr_accessor :slug
-        # published, draft, submission, queue
-        attr_accessor :state
-      
+      module ClassMethods
+        
         def submit_to(url = nil)
           @submit_to = url if url
           @submit_to
@@ -53,17 +38,10 @@ module Ubiquitously
         
           [a, b, c, d].map { |url| "#{url}?#{params}".gsub(/\?$/, "") }
         end
-
-        def service
-          self.to_s.split("::")[1].underscore.downcase
-        end
+        
       end
     
       module InstanceMethods
-        def service
-          self.class.service
-        end
-      
         def tokenize
           {
             :url => self.url,

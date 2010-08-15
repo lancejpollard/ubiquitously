@@ -1,6 +1,6 @@
 module Ubiquitously
   module MvcForge
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       # raises Net::HTTPForbidden 403 if already logged in
       def login
         page = agent.get("http://mvcforge.com/user/login")
@@ -10,16 +10,12 @@ module Ubiquitously
         
         page = form.submit
         
-        match = page.parser.css(".messages.error").first.text =~ /unrecognized username or password/i).nil? rescue true
-        
-        authorized? match
+        authorize!(page.parser.css(".messages.error").text.to_s !~ /unrecognized username or password/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       def create
-        token = tokenize
-        
         page = agent.get("http://mvcforge.com/submit")
         form = page.form_with(:action => "/submit")
         

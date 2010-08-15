@@ -7,11 +7,7 @@ module Ubiquitously
     end
     
     class Post < Ubiquitously::Service::Post
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        
+      def create
         page = agent.get("http://kailoon.com/web-design-news/")
         form = page.forms.detect { |form| form.form_node["id"] == "commentform" }
         

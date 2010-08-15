@@ -8,7 +8,7 @@ module Ubiquitously
         form["pass"] = password
         page = form.submit
         
-        authorized?(page.title.strip !~ /^User account/i)
+        authorize!(page.title.strip !~ /^User account/i)
       end
     end
     

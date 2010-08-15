@@ -8,14 +8,12 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        authorized?(page.uri != "http://flikode.com/login")
+        authorize!(page.uri != "http://flikode.com/login")
       end
     end
     
     class Post < Ubiquitously::Service::Post
       def create
-        token = tokenize
-        
         page = agent.get("http://flikode.com/snippet")
         form = page.form_with(:name => "snippet")
         

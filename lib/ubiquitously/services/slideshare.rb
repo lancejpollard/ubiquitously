@@ -10,7 +10,7 @@ module Ubiquitously
         form["login"] = "Login"
         page = form.submit
         
-        authorized?(page.uri != "http://www.slideshare.net/login")
+        authorize!(page.uri != "http://www.slideshare.net/login")
       end
     end
     

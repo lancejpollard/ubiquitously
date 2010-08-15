@@ -1,20 +1,19 @@
 module Ubiquitously
-  module Post
-    module Ownable
+  module Ownable
+    module Post
       def self.included(base)
         base.extend ClassMethods
         base.send :include, InstanceMethods
       end
     
       module ClassMethods
-      
       end
     
       module InstanceMethods
         def agent
           user.agent
         end
-      
+        
         def username
           user.username_for(self)
         end
@@ -24,7 +23,7 @@ module Ubiquitously
         end
       
         def authorize
-          user.login(service_name)
+          user.login(service)
         end
       end
     end

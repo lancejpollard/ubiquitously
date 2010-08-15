@@ -3,20 +3,33 @@ Dir["#{File.dirname(__FILE__)}/post/*"].each { |c| require c unless File.directo
 module Ubiquitously
   module Service
     class Post < Ubiquitously::Base
-      include Ubiquitously::Post::Ownable
-      include Ubiquitously::Post::Postable
-      include Ubiquitously::Post::Restful
-      include Ubiquitously::Post::Loggable
+      include Ubiquitously::Ownable::Post
+      include Ubiquitously::Postable::Post
+      include Ubiquitously::Restful::Post
+      include Ubiquitously::Loggable::Post
       
-      validates_presence_of :url, :title, :description, :tags
+      validates_presence_of :title, :description, :tags
       attr_accessor :token
+      attr_accessor :title, :url, :description, :tags, :categories, :remote, :service_id
+      # some sites check to see if you're posting duplicate content!
+      # perhaps "vote" can mean "favorite" also
+      attr_accessor :image, :rating, :privacy, :vote, :status, :must_be_unique, :captcha
+      attr_accessor :service_url, :user, :upvotes, :downvotes
+      # the application that automates! ("Posted by TweetMeme")
+      attr_accessor :source, :source_url
+      # kind == regular, link, quote, photo, conversation, video, audio, answer
+      attr_accessor :kind
+      # plain, html, markdown
+      attr_accessor :format, :extension
+      # max 55 chars, for custom url if possible
+      attr_accessor :slug
+      # published, draft, submission, queue
+      attr_accessor :state
       
-      before :create, :update do
-        self.token = tokenize
-      end
-      after :create, :update do
-        self.token = nil
-      end
+      before_create { self.token = tokenize }
+      before_update { self.token = tokenize }
+      after_create { self.token = nil }
+      after_update { self.token = nil }
       
       def initialize(attributes = {})
         apply attributes

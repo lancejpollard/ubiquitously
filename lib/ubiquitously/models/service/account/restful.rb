@@ -3,15 +3,18 @@ module Ubiquitously
     module Restful
       def self.included(base)
         base.extend ClassMethods
+        base.restful
         base.send :include, InstanceMethods
       end
     
       module ClassMethods
-        subclassable_callbacks :login
+        def restful
+          subclassable_callbacks :login
+        end
       end
-    
-      module InstanceMethods
       
+      module InstanceMethods
+        
       end
     end
   end

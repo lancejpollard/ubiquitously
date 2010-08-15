@@ -9,15 +9,15 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        authorized? !(page.title =~ /The Latest News/i).nil?
+        authorize!(page.title =~ /The Latest News/i)
       end
     end
     
     class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title, :description
       submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"
       
       def create
+        raise token.inspect
         # url
         page        = agent.get("http://digg.com/submit/")
         form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
@@ -62,8 +62,7 @@ module Ubiquitously
         form["captchatext"] = captcha_says
         form["thumbnail"] = image if image
         
-        unless options[:debug] == true
-          puts "Submitting Digg form"
+        unless debug?
           form.action = "http://digg.com/submit/details?key=#{key}"
           page = form.submit
         end
@@ -72,11 +71,12 @@ module Ubiquitously
       end
       
       def update
-        token = nil
+        raise token.inspect
+        key = nil
         page = agent.get(remote.service_url)
         page.parser.css("script").each do |script|
           if script["src"] =~ /http:\/\/digg\.com\/dynjs\/loader/
-            token = agent.get(script["src"]).body.match(/tokens\.digg\.perform\s+=\s+"([^"]+)"/)[1]
+            key = agent.get(script["src"]).body.match(/tokens\.digg\.perform\s+=\s+"([^"]+)"/)[1]
           end
         end
         location = page.body.match(/D\.meta\.page\.type\s+=\s+"([^"]+)"/)[1]
@@ -91,10 +91,10 @@ module Ubiquitously
         }
         params = {
           "location" => location,
-          "token" => token,
+          "token" => key,
           "itemid" => remote.service_id
-        }#.inject([]) { |array, (k, v)| array << "#{k}=#{v}"; array }.join("&")
-        string = params.inject([]) { |array, (k, v)| array << "#{k}=#{v}"; array }.join("&")
+        }
+        
         begin
           page = agent.post("http://digg.com/ajax/digg/perform", params, headers)
         rescue Exception => e
@@ -107,7 +107,7 @@ module Ubiquitously
       class << self
         def find(options = {})
           url = options[:url]
-          raise ArgumentError.new("Please give #{service_name} a url") if url.blank?
+          raise ArgumentError.new("Please give #{service} a url") if url.blank?
           urls = url_permutations(options[:url])
           user = options[:user]
           records = []
@@ -133,13 +133,13 @@ module Ubiquitously
               :categories => categories,
               :service_url => service_url,
               :service_id  => service_id,
-              :votes => votes,
+              :upvotes => votes,
               :user => user
             )
             records << record if urls.include?(record.url)
           end
           
-          records.sort! { |a, b| b.votes <=> a.votes }
+          records.sort! { |a, b| b.upvotes <=> a.upvotes }
           
           if options[:url]
             records.first

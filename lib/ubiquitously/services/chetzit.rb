@@ -2,33 +2,18 @@ module Ubiquitously
   module Chetzit
     class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://chetzit.com/login/")
         form = page.forms.first
         form["login"] = username
         form["password"] = password
         page = form.submit
         
-        @logged_in = (page.title =~ /^Login/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.title !~ /^Login/i)
       end
     end
     
     class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title, :description
-      
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        token = tokenize
-        
+      def create
         page = agent.get("http://chetzit.com/link/add/")
         form = page.forms.detect do |form|
           !form.form_node.css("input[name=security_ls_key]").first.blank?

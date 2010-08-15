@@ -1,5 +1,5 @@
 module Ubiquitously
-  module Friendfeed
+  module ServiceName
     class Account < Ubiquitously::Service::Account
       def login
         page = agent.get("http://service.com/login")

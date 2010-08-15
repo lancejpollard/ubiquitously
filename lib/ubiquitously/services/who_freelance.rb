@@ -1,5 +1,5 @@
 module Ubiquitously
-  module ServiceName
+  module WhoFreelance
     class Account < Ubiquitously::Service::Account
       def login
         page = agent.get("http://service.com/login")
@@ -8,7 +8,7 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        authorized?(page.title =~ /Some title/i)
+        authorize!(page.title =~ /Some title/i)
       end
     end
     

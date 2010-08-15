@@ -22,8 +22,6 @@ module Ubiquitously
       end
       
       def create
-        token = tokenize
-        
         page = agent.get("http://favshare.net/submit.php")
         form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
         

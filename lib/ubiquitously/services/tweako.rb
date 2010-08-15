@@ -2,21 +2,13 @@ module Ubiquitously
   module Tweako
     class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://www.tweako.com/?q=user/login")
         form = page.forms.detect { |form| form.form_node["id"] == "user_login" }
         form["edit[name]"] = username
         form["edit[pass]"] = password
         page = form.submit
         
-        @logged_in = (page.title =~ /^user account/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorize!(page.title !~ /^user account/i)
       end
     end
     

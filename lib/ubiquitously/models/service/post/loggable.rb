@@ -1,8 +1,9 @@
 module Ubiquitously
-  module Post
-    module Loggable
+  module Loggable
+    module Post
       def self.included(base)
         base.extend ClassMethods
+        base.loggable
         base.send :include, InstanceMethods
       end
       
@@ -10,30 +11,46 @@ module Ubiquitously
         def logger
           Ubiquitously.logger
         end
-      
-        before_create do
-          return false unless valid?
-          authorize
-          return false unless new_record?
-          logger.info "[create:before] #{inspect}"
+        
+        def loggable
+          before_create do
+            unless valid?
+              logger.info "[invalid] #{errors.full_messages}"
+              return false
+            end
+            authorize
+            return false unless new_record?
+            logger.info "[create:before] #{inspect}"
+          end
+          
+          after_create do
+            logger.info "[create:after] #{inspect}"
+          end
+          
+          before_update do
+            unless valid?
+              logger.info "[invalid] #{errors.full_messages}"
+              return false
+            end
+            authorize
+            logger.info "[update:before] #{inspect}"
+          end
+
+          after_update do
+            logger.info "[update:after] #{inspect}"
+          end
         end
-      
-        after_create do
-          logger.info "[create:after] #{inspect}"
-        end
-      
-        before_update do
-          return false unless valid?
-          authorize
-          logger.info "[update:before] #{inspect}"
-        end
-      
-        after_update do
-          logger.info "[update:after] #{inspect}"
+        
+        def service
+          to_s.split("::")[1].underscore.gsub(/\s+/, "_").downcase
         end
       end
-    
+      
       module InstanceMethods
+        def service
+          self.class.service
+        end
+        
         def logger
           self.class.logger
         end

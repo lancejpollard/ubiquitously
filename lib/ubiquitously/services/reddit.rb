@@ -8,13 +8,11 @@ module Ubiquitously
         form["passwd"] = password
         page = form.submit
         
-        authorized?(page.title !~ /login or register/i)
+        authorize!(page.title !~ /login or register/i)
       end
     end
     
-    class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title
-      
+    class Post < Ubiquitously::Service::Post      
       def create
         page = agent.get("http://www.reddit.com/submit?url=#{url}")
         key = page.body.match(/modhash\:\s+'([^']+)'/)[1]
@@ -38,7 +36,7 @@ module Ubiquitously
             "X-Requested-With" => "XMLHttpRequest",
             "Accept" => "application/json, text/javascript, */*"
           }
-          unless options[:debug] == true
+          unless debug?
             page = agent.post("http://www.reddit.com/api/vote", params, headers)
           end
         else
@@ -54,7 +52,7 @@ module Ubiquitously
           headers = {
             "X-Requested-With" => "XMLHttpRequest"
           }
-          unless options[:debug] == true
+          unless debug?
             page = form.submit(nil, headers)
           end
         end

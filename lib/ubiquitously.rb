@@ -3,7 +3,6 @@ require 'open-uri'
 require 'cgi'
 require 'yaml'
 require 'json'
-require 'nokogiri'
 require 'mechanize'
 require 'highline/import'
 require 'logger'
@@ -13,15 +12,13 @@ require 'active_model'
 
 this = File.dirname(__FILE__)
 Dir["#{this}/ext/*"].each { |c| require c }
-Dir["#{this}/ubiquitously/mixins/*"].each { |c| require c }
-require "#{this}/ubiquitously/services/base"
 
 module Ubiquitously
   class SettingsError < StandardError; end
   class AuthenticationError < StandardError; end
   class DuplicateError < StandardError; end
   class RecordInvalid < StandardError; end
-
+  
   class << self
     attr_accessor :config, :logger
     
@@ -30,11 +27,16 @@ module Ubiquitously
     end
     
     def logger
-      @logger ||= Logger.new(STDOUT)
+      unless @logger
+        @logger = Logger.new(STDOUT)
+        @logger.level = Logger::INFO
+      end
+      
+      @logger
     end
     
     def debug?
-      logger.log_level == Logger::DEBUG
+      logger.debug?
     end
     
     def key(path)
@@ -62,4 +64,8 @@ end
 Dir["#{this}/ubiquitously/models/*"].each { |c| require c unless File.directory?(c) }
 Dir["#{this}/ubiquitously/services/*"].each { |c| require c unless File.directory?(c) }
 
-SubclassableCallbacks.override
+overrides = Dir["#{this}/ubiquitously/services/*"].map do |file|
+  name = File.basename(file).split(".").first.camelize
+  ["Ubiquitously::#{name}::Account".constantize, "Ubiquitously::#{name}::Post".constantize]
+end.flatten
+SubclassableCallbacks.override(*overrides)

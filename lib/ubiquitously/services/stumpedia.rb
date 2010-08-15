@@ -3,9 +3,7 @@ module Ubiquitously
     class Account < Ubiquitously::Service::Account
     end
     
-    class Post < Ubiquitously::Service::Post
-      validates_presence_of :url, :title, :description, :tags
-      
+    class Post < Ubiquitously::Service::Post      
       def save(options = {})
         return false unless valid?
         

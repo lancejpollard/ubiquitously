@@ -3,23 +3,42 @@ module Ubiquitously
     module Loggable
       def self.included(base)
         base.extend ClassMethods
+        base.loggable
         base.send :include, InstanceMethods
       end
     
       module ClassMethods
-        before_login do 
-          return false if logged_in?
-          logger.info "[login:before] #{inspect}"
+        def loggable
+          before_login do 
+            return false if logged_in?
+            logger.info "[login:before] #{inspect}"
+          end
+
+          after_login do
+            logger.info "[login:after] #{inspect}"
+          end
         end
-      
-        after_login do
-          logger.info "[login:after] #{inspect}"
+        
+        def service
+          name.split("::")[1].underscore.gsub(/\s+/, "_")
+        end
+        
+        def logger
+          Ubiquitously.logger
         end
       end
       
       module InstanceMethods
+        def logger
+          self.class.logger
+        end
+        
+        def service
+          self.class.service
+        end
+        
         def inspect
-          "#<#{self.class.inspect} @username=#{username.inspect} @password=#{password.gsub(/./, "*").inspect} @service=#{service_name.inspect}>"
+          "#<#{self.class.inspect} @username=#{username.inspect} @password=#{password.gsub(/./, "*").inspect} @service=#{service.inspect}>"
         end
       end
     end

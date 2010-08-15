@@ -9,13 +9,11 @@ module Ubiquitously
         form["blogin"] = "Login"
         page = form.submit
         
-        authorized?(page.uri != "http://snipt.net/login")
+        authorize!(page.uri != "http://snipt.net/login")
       end
     end
     
-    class Post < Ubiquitously::Service::Post
-      validates_presence_of :title, :description, :tags
-      
+    class Post < Ubiquitously::Service::Post      
       def create
         page = agent.get("http://snipt.net/#{user.username_for(self)}")
         form = page.forms.detect { |form| form.form_node["id"] == "snippet-form" }

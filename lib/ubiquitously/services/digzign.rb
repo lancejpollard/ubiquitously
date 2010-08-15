@@ -1,6 +1,6 @@
 module Ubiquitously
   module Digzign
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
         
@@ -12,7 +12,7 @@ module Ubiquitously
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       def save(options = {})
         return false if !valid?
         

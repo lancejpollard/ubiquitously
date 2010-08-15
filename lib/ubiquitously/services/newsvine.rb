@@ -1,6 +1,6 @@
 module Ubiquitously
   module Newsvine
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         page = agent.get("https://www.newsvine.com/_nv/accounts/login")
         form = page.form_with(:action => "https://www.newsvine.com/_nv/api/accounts/login")
@@ -8,15 +8,11 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        # No match. Please try again
-        match = (page.title =~ /Log in/i).nil?
-        authorized? match
+        authorize!(page.title !~ /Log in/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      validates_presence_of :url, :title
-      
+    class Post < Ubiquitously::Service::Post
       def tokenize
         super.merge(:tags => tags.taggify(" ", ", "))
       end

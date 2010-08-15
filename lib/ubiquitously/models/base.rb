@@ -1,7 +1,7 @@
 module Ubiquitously
   class Base
     include ActiveModel::Validations
-    include ActiveModel::Callbacks
+    extend ActiveModel::Callbacks
     include ActiveModel::Serialization
     include SubclassableCallbacks
     
