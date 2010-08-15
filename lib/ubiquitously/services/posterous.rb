@@ -1,18 +1,14 @@
 module Ubiquitously
   module Posterous
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       include HTTParty
       base_uri 'http://posterous.com/api'
       validates_presence_of :url, :title, :description, :tags
       
-      def save(options = {})
-        return false unless valid?
-        
-        token = tokenize
-        
+      def create
         self.class.post("/newpost", {
           :query => {
             :title => token[:title],

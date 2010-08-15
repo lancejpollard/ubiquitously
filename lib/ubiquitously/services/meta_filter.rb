@@ -1,6 +1,6 @@
 module Ubiquitously
   module MetaFilter
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
         
@@ -26,7 +26,7 @@ module Ubiquitously
     # You may not have been a member long enough (1 week),
     # you may not have posted enough comments (at least 3),
     # or you may have already posted a link in the past 24 hours.
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       def save(options = {})
         return false if !valid?
         

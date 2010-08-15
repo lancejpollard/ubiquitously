@@ -1,9 +1,9 @@
 module Ubiquitously
   module Identica
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description, :tags
       
       def save(options = {})

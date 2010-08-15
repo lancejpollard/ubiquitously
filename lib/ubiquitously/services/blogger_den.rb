@@ -1,6 +1,6 @@
 module Ubiquitously
   module BloggerDen
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
 
@@ -19,7 +19,7 @@ module Ubiquitously
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description
       # title max length == 120
       submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"

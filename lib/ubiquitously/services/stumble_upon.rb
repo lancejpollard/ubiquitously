@@ -1,34 +1,21 @@
 module Ubiquitously
   module StumbleUpon
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://www.stumbleupon.com/login.php")
         form = page.form_with(:name => "formLogin")
         form["username"] = username
         form["password"] = password
         page = form.submit
 
-        @logged_in = !(page.body =~ /Currently logged in/i).blank?
-
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.body =~ /Currently logged in/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       submit_to "http://www.stumbleupon.com/submit?url=:url&title=:title"
       
-      def save(options = {})
-        return unless valid?
-        
-        authorize
-        token = tokenize
-        
+      def create
         page = agent.get("http://www.stumbleupon.com/favorites/")
         action    = "http://www.stumbleupon.com/ajax/edit/comment"
 
@@ -72,6 +59,8 @@ module Ubiquitously
         end
         
         page   = form.submit(nil, headers)
+        
+        true
       end
     end
   end

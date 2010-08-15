@@ -1,6 +1,6 @@
 module Ubiquitously
   module YahooBuzz
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         page = agent.get("https://login.yahoo.com/config/login_verify2")
         form = page.form_with(:name => "login_form")
@@ -9,25 +9,14 @@ module Ubiquitously
         page = form.submit
         
         # No match. Please try again        
-        @logged_in = (page.title.to_s =~ /^Sign in/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-
-        @logged_in
+        authorized?(page.title.to_s !~ /^Sign in/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      validates_presence_of :url
+    class Post < Ubiquitously::Service::Post
       
       # yahoo has 4 ajax forms on one page, but they make it look like it's 2 steps
-      def save(options = {})
-        return false unless valid?
-        
-        user.login
-        
+      def create
         page = agent.get("http://buzz.yahoo.com/submit")
         
         headers = {
@@ -41,11 +30,11 @@ module Ubiquitously
           form.action = "http://buzz.yahoo.com/submit/get;_ylt=#{$1}"
         end
 
-        form["url"] = url
+        form["url"] = token[:url]
         result = form.submit(nil, headers)
         
         # description form
-        if description == "true?"
+        if description
           form = page.forms.detect do |form|
             form.form_node["class"] == "inline-edit-form" &&
               !form.form_node.css("input[value=submitSummary]").first.blank?

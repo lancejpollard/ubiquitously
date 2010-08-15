@@ -7,11 +7,12 @@ require 'nokogiri'
 require 'mechanize'
 require 'highline/import'
 require 'logger'
+require 'httparty'
 require 'active_support'
 require 'active_model'
 
 this = File.dirname(__FILE__)
-require "#{this}/ext"
+Dir["#{this}/ext/*"].each { |c| require c }
 Dir["#{this}/ubiquitously/mixins/*"].each { |c| require c }
 require "#{this}/ubiquitously/services/base"
 
@@ -22,10 +23,18 @@ module Ubiquitously
   class RecordInvalid < StandardError; end
 
   class << self
-    attr_accessor :config
+    attr_accessor :config, :logger
     
     def configure(value)
       self.config = value.is_a?(String) ? YAML.load_file(value) : value
+    end
+    
+    def logger
+      @logger ||= Logger.new(STDOUT)
+    end
+    
+    def debug?
+      logger.log_level == Logger::DEBUG
     end
     
     def key(path)
@@ -50,7 +59,7 @@ module Ubiquitously
   end
 end
 
-require "#{this}/ubiquitously/user"
-require "#{this}/ubiquitously/page"
-require "#{this}/ubiquitously/post"
+Dir["#{this}/ubiquitously/models/*"].each { |c| require c unless File.directory?(c) }
 Dir["#{this}/ubiquitously/services/*"].each { |c| require c unless File.directory?(c) }
+
+SubclassableCallbacks.override

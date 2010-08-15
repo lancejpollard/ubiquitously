@@ -1,18 +1,13 @@
 module Ubiquitously
   module ScriptAndStyle
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true # no login
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        token = tokenize
-        
+    class Post < Ubiquitously::Service::Post
+      def create
         page = agent.get("http://scriptandstyle.com/submit")
         form = page.form_with(:name => "tdomf_form1")
         

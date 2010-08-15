@@ -1,6 +1,6 @@
 module Ubiquitously
   module DzoneSnippets
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
         
@@ -21,21 +21,16 @@ module Ubiquitously
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       
       def tokenize
         super.merge(
           :description => "<code>#{self.description}</code>",
-          :tags => tags.chop(/,\s+/, 40).map do |tag|
-            tag.downcase.strip.gsub(/[^a-z0-9]/, "-").squeeze("-")
-          end.join(" ")
+          :tags => tags.taggify("-", ", ", 40)
         )
       end
       
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
+      def create
         token = tokenize
         
         page = agent.get("http://snippets.dzone.com/")

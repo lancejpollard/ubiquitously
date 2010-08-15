@@ -1,6 +1,6 @@
 module Ubiquitously
   module DesignBump
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
         
@@ -21,16 +21,10 @@ module Ubiquitously
     end
     
     # drupal
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       
       def tokenize
-        super.merge(
-          :tags => tags.map do |tag|
-            tag.downcase.strip.gsub(/[^a-z0-9]/, " ").squeeze(" ")
-          end.map do |tag|
-            (tag =~ /\s+/).nil? ? tag : "\"#{tag}\"" 
-          end.join(" ")
-        )
+        super.merge(:tags => tags.taggify(" ", :quote => true))
       end
       
       def save(options = {})

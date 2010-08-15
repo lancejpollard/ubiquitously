@@ -17,7 +17,7 @@ class Hash
       options
     end
   end
-
+  
   # Destructively convert all keys to symbols.
   def symbolize_keys!
     self.replace(self.symbolize_keys)
@@ -25,14 +25,28 @@ class Hash
 end
 
 class Array
-  def chop(separator = "", max = 40)
+  def chop(separator = "", max = 40, &block)
+    return self if self.join(separator).length < max # opt.
     result = []
     self.each do |word|
       break if (result.join(separator).length + word.length > max)
-      result << word 
+      word = yield word if block_given?
+      result << word
       result
     end
     result
+  end
+  
+  # separator = ", ",
+  # max = 10_000
+  # quote = true|false
+  def taggify(space = " ", separator = ", ", max = 10_000)
+    quoted = !(separator =~ /\s+/).nil?
+    chop(separator, max) do |word|
+      result = word.downcase.strip.gsub(/[^a-z0-9\.]/, space).squeeze(space)
+      result = "\"#{result}\"" if quoted && !(result =~ /\s+/).nil?
+      result
+    end.join(separator)
   end
   
   def recursively_symbolize_keys!

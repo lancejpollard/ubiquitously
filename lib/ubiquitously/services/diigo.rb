@@ -1,39 +1,29 @@
 module Ubiquitously
   module Diigo
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       
       def login
-        return true if logged_in?
         page = agent.get("https://secure.diigo.com/sign-in")
         form = page.form_with(:name => "loginForm")
         form["username"] = username
         form["password"] = password
         page = form.submit
-        @logged_in = (page.title =~ /Sign in/i).nil?
         
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized? (page.title =~ /Sign in/i).nil?
       end
       
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description, :tags
       submit_to "http://www.diigo.com/post?b_mode=0&c_mode=0&url=:url&title=:title&comments=:description&tag=:tags"
       
       # tags are space separated. Use " " for tag with multiple words.
       def tokenize
-        super.merge(
-          :tags => tags.map { |tag| '"' + tag.downcase.strip.gsub(/[^a-z0-9]/, " ").squeeze(" ") + '"' }.join(" ")
-        )
+        super.merge(:tags => tags.taggify(" ", " "))
       end
       
-      def create(options = {})
-        super
-        
+      def create
         token = tokenize
         
         page = agent.get("https://secure.diigo.com/item/new/bookmark")
@@ -44,7 +34,7 @@ module Ubiquitously
         # tags are space separated. Use " " for tag with multiple words.
         form["tags"] = token[:tags]
         
-        unless options[:debug] == true
+        unless debug?
           page = form.submit
         end
       end

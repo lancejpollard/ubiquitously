@@ -1,6 +1,6 @@
 module Ubiquitously
   module Chetzit
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
         
@@ -20,7 +20,7 @@ module Ubiquitously
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description
       
       def save(options = {})

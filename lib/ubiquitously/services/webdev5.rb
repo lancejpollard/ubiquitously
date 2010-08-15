@@ -1,39 +1,27 @@
 module Ubiquitously
   module Webdev5
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://webdev5.com/user/login")
         form = page.forms.detect {|form| form.form_node["id"] == "user-login"}
         form["name"] = username
         form["pass"] = password
         page = form.submit
         
-        @logged_in = (page.title.strip =~ /^User account/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.title.strip !~ /^User account/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       submit_to "http://webdev5.com/submit?url=:url&title=:title&body=:body"
       
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        
+      def create
         page = agent.get("http://webdev5.com/submit")
         form = page.forms.detect {|form| form.form_node["id"] == "node-form"}
         
-        form["url"] = url
-        form["title"] = title
-        form["body"] = body
+        form["url"] = token[:url]
+        form["title"] = token[:title]
+        form["body"] = token[:body]
         form.field_with(:name => "taxonomy[1]").options.each do |option|
           
         end

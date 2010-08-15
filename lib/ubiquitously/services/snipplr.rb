@@ -2,10 +2,8 @@
 # only uses last tag in array :/
 module Ubiquitously
   module Snipplr
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://snipplr.com/login/")
         form = page.form_with(:action => "/login/")
         form["username"] = username
@@ -13,34 +11,17 @@ module Ubiquitously
         form["btnsubmit"] = "LOGIN"
         page = form.submit
         
-        @logged_in = page.uri != "http://snipplr.com/login/"
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.uri != "http://snipplr.com/login/")
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       
       def tokenize
-        super.merge(
-          :tags => tags.map do |tag|
-            tag.downcase.strip.gsub(/[^a-z0-9]/, " ").squeeze(" ")
-          end.map do |tag|
-            (tag =~ /\s+/).nil? ? tag : "\"#{tag}\"" 
-          end.join(" ")
-        )
+        super.merge(:tags => tags.taggify(" ", " "))
       end
       
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        token = tokenize
-        
+      def create
         page = agent.get("http://snipplr.com/new/")
         form = page.form_with(:action => "/new/")
         
@@ -55,7 +36,6 @@ module Ubiquitously
           end
         end
         form["private"] = 1 if private?
-        
         
         # captcha
         iframe_url = page.parser.css("noscript iframe").first["src"]

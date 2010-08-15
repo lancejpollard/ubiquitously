@@ -1,31 +1,23 @@
 # digg now uses oauth, so switch when we have oauth through terminal
 module Ubiquitously
   module Digg
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-
         page = agent.get("http://digg.com/login")
         form = page.form_with(:action => "/login/prepare/digg")
         form["username"] = username
         form["password"] = password
         page = form.submit
-        @logged_in = !(page.title =~ /The Latest News/i).nil?
         
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized? !(page.title =~ /The Latest News/i).nil?
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description
       submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"
       
-      def create(options = {})
-        super
+      def create
         # url
         page        = agent.get("http://digg.com/submit/")
         form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
@@ -79,8 +71,7 @@ module Ubiquitously
         true
       end
       
-      def update(options = {})
-        super
+      def update
         token = nil
         page = agent.get(remote.service_url)
         page.parser.css("script").each do |script|

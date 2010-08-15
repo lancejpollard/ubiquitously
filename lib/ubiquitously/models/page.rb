@@ -1,11 +1,9 @@
 module Ubiquitously
-  class Page
+  class Page < Base
     attr_accessor :url, :title, :description, :tags, :image
     
     def initialize(attributes = {})
-      attributes.each do |key, value|
-        self.send("#{key.to_s}=", value) if self.respond_to?(key)
-      end
+      apply attributes
     end
     
     def parse
@@ -17,9 +15,7 @@ module Ubiquitously
       self.description.strip!
       
       self.tags = html.xpath("//meta[@name='keywords']").first["content"] rescue ""
-      self.tags = self.tags.split(/,\s+/).map do |tag|
-        tag.downcase.gsub(/[^a-z0-9]/, "-").squeeze("-").strip
-      end
+      self.tags = self.tags.split(/,\s+/).taggify("-", ", ").split(", ")
       
       self.image = html.xpath("//link[@rel='image_src']").first["image_src"] rescue nil
       if self.image.blank?

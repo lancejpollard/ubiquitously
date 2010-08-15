@@ -1,26 +1,18 @@
 module Ubiquitously
   module Gist
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("https://gist.github.com/login")
         form = page.form_with(:action => "/session")
         form["login"] = username
         form["password"] = password
         page = form.submit
         
-        @logged_in = !(page.uri == "https://gist.github.com/session")
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized? !(page.uri == "https://gist.github.com/session")
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :title, :description, :format, :extension
       
       def tokenize
@@ -30,10 +22,7 @@ module Ubiquitously
         )
       end
       
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
+      def create
         token = tokenize
         
         page = agent.get("http://gist.github.com/")

@@ -1,9 +1,7 @@
 module Ubiquitously
   module Snipt
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://snipt.net/login")
         form = page.form_with(:name => "fauth")
         form["username"] = username
@@ -11,23 +9,14 @@ module Ubiquitously
         form["blogin"] = "Login"
         page = form.submit
         
-        @logged_in = page.uri != "http://snipt.net/login"
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.uri != "http://snipt.net/login")
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        token = tokenize
-        
+    class Post < Ubiquitously::Service::Post
+      validates_presence_of :title, :description, :tags
+      
+      def create
         page = agent.get("http://snipt.net/#{user.username_for(self)}")
         form = page.forms.detect { |form| form.form_node["id"] == "snippet-form" }
         form["description"] = token[:title]

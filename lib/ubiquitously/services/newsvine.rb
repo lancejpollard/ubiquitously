@@ -2,48 +2,41 @@ module Ubiquitously
   module Newsvine
     class Account < Ubiquitously::Base::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("https://www.newsvine.com/_nv/accounts/login")
         form = page.form_with(:action => "https://www.newsvine.com/_nv/api/accounts/login")
         form["email"] = username
         form["password"] = password
         page = form.submit
         
-        # No match. Please try again        
-        @logged_in = (page.title =~ /Log in/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        # No match. Please try again
+        match = (page.title =~ /Log in/i).nil?
+        authorized? match
       end
     end
     
     class Post < Ubiquitously::Base::Post
       validates_presence_of :url, :title
       
-      def save(options = {})
-        return false if !valid? || new_record?
-        
-        authorize
-        
+      def tokenize
+        super.merge(:tags => tags.taggify(" ", ", "))
+      end
+      
+      def create
         page = agent.get("http://www.newsvine.com/_tools/seed")
         form = page.form_with(:action => "http://www.newsvine.com/_action/tools/saveLink")
         
-        form["url"] = url
-        form["headline"] = title
+        form["url"] = token[:url]
+        form["headline"] = token[:title]
         form.radiobuttons_with(:name => "newsType").each do |button|
           button.check if button.value == "x"
         end
         form.field_with(:name => "categoryTag").options.each do |option|
           option.select if option.value == "technology"
         end
-        form["blurb"] = description
-        form["tags"] = tags.join(", ")
+        form["blurb"] = token[:description]
+        form["tags"] = token[:tags]
         
-        unless options[:debug] == true
+        unless debug?
           page = form.submit
         end
         

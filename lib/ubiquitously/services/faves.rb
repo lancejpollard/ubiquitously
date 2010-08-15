@@ -1,9 +1,7 @@
 module Ubiquitously
   module Faves
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        puts 'logging in'
         page = agent.get("https://secure.faves.com/signIn")
         form = page.forms.detect {|form| form.form_node["id"] == "signInBox"}
         form["rUsername"] = username
@@ -11,23 +9,14 @@ module Ubiquitously
         form["action"] = "Sign In"
         page = form.submit
         
-        @logged_in = (page.title =~ /Sign In/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        puts 'logged in'
-        @logged_in
+        authorized? (page.title =~ /Sign In/i).nil?
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description, :tags
       
-      def save(options = {})
-        return false unless valid?
-        authorize
-        
+      def create
         page = agent.get("http://faves.com/createdot.aspx")
         form = page.form_with(:name => "createDotForm")
         form["noteText"] = description
@@ -53,8 +42,7 @@ module Ubiquitously
           "Accept-Encoding" => "gzip,deflate"
         }
         
-        unless options[:debug] == true
-          puts "Submitting form to Faves"
+        unless debug?
           page = form.submit(nil, headers)
         end
         

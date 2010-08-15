@@ -1,6 +1,6 @@
 module Ubiquitously
   module Propeller
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         page = agent.get("http://www.propeller.com/signin/")
         form = page.forms.detect {|form| form.form_node["class"] == "ajax-form"}
@@ -19,34 +19,33 @@ module Ubiquitously
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       # title max == 150
       validates_presence_of :url, :title, :tags, :description
       
-      def save
-        return false unless valid?
-        
-        user.login
-
+      def tokenize
+        super.merge(:tags => tags.taggify("_", " "))
+      end
+      
+      def create
         # url
         page        = agent.get("http://www.propeller.com/story/submit/")
         form        = page.forms.detect {|form| form.form_node["method"].downcase == "post"}
-        form["url"] = url
+        form["url"] = token[:url]
         
-        puts form.inspect
         # details
         # http://www.propeller.com/story/submit/content/
         page        = form.submit
         form        = page.forms.detect {|form| form.form_node["method"].downcase == "post"}
-        puts "DETAILS"
+
         form.radiobuttons_with(:name => "title_multi").each do |button|
           button.check if button.value == "-1"
         end
         
-        form["title_multi_text"] = title
-        form["description"]      = description
+        form["title_multi_text"] = token[:title]
+        form["description"]      = token[:description]
         # separate by space, multi words are underscored
-        form["user_tags"]        = tags.map {|tag| tag.underscore.gsub(/[\s|-]+/, "_")}.join(" ")
+        form["user_tags"]        = token[:tags]
         
         form.radiobuttons_with(:name => "category").each do |button|
           button.check if button.value.to_s == "18"
@@ -58,7 +57,7 @@ module Ubiquitously
         # approve
         page.forms[1].submit
         
-        unless options[:debug] == true
+        unless debug?
           page = form.submit
         end
         

@@ -1,9 +1,7 @@
 module Ubiquitously
   module Favshare
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://favshare.net/login.php")
         form = page.forms.detect {|form| form.form_node["id"] == "thisform"}
         form["username"] = username
@@ -16,22 +14,14 @@ module Ubiquitously
     end
     
     # see your posts here: http://favshare.net/user/history/viatropos/
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       
       # max tags == 40 chars
       def tokenize
-        max = 40
-        super.merge(
-          :tags => tags.chop(", ", 40).map do |tag|
-              tag.downcase.gsub(/[^a-z0-9]/, " ").squeeze(" ")
-            end.join(", ")
-        )
+        super.merge(:tags => tags.taggify(" ", ", ", 40))
       end
       
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
+      def create
         token = tokenize
         
         page = agent.get("http://favshare.net/submit.php")
@@ -78,7 +68,7 @@ module Ubiquitously
         form["recaptcha_response_field"] = "manual_challenge"
         page = form.submit
 
-        unless options[:debug] == true
+        unless debug?
           form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
           page = form.submit
         end

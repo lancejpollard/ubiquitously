@@ -8,36 +8,26 @@ module Ubiquitously
         form["ctl06$Password"] = password
         page = form.submit
         
-        @logged_in = (page.url.downcase == "http://shoutwire.com/login").nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.url.downcase != "http://shoutwire.com/login")
       end
     end
     
     class Post < Ubiquitously::Base::Post
       validates_presence_of :url, :title, :description, :tags
       
-      def save
-        return false unless valid?
-
-        user.login
-        
+      def create
         page = agent.get("http://shoutwire.com/submit")
         form = page.form_with(:name => "TemplateMainForm")
-        form["ctl06$txtLink"] = url
+        form["ctl06$txtLink"] = token[:url]
         page = form.submit
         
         form = page.form_with(:name => "TemplateMainForm")
-        form["ctl06$txtTitle"] = title
-        form["ctl06$txtDescription"] = description
+        form["ctl06$txtTitle"] = token[:title]
+        form["ctl06$txtDescription"] = token[:description]
         #page = form.submit
         
         # has a captcha, not done
-        unless options[:debug] == true
+        unless debug?
           page = form.submit
         end
       end

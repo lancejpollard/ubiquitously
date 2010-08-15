@@ -1,8 +1,7 @@
 module Ubiquitously
   module Mixx
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
         
         page = agent.get("https://www.mixx.com/")
         form = page.form_with(:action => "https://www.mixx.com/save_login")
@@ -10,21 +9,12 @@ module Ubiquitously
         form["user[password]"] = password
         page = form.submit
 
-        @logged_in = (page.body =~ /login was unsuccessful/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?((page.body =~ /login was unsuccessful/i).nil?)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      def create(options = {})
-        super
-        
-        authorize
+    class Post < Ubiquitously::Service::Post
+      def create
         token = tokenize
         
         page = agent.get("http://www.mixx.com/submit")

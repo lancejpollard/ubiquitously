@@ -1,9 +1,7 @@
 module Ubiquitously
   module Dzone
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-
         page = agent.get("http://www.dzone.com/links/loginLightbox.html")
         form = page.form_with(:action => "/links/j_acegi_security_check")
         form["j_username"] = username
@@ -11,22 +9,15 @@ module Ubiquitously
         form["_acegi_security_remember_me"] = "on"
         page = form.submit
         
-        @logged_in = (page.body =~ /Invalid username or password/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized? (page.body =~ /Invalid username or password/i).nil?
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title, :description, :categories
       submit_to "http://www.dzone.com/links/add.html?url=:url&title=:url&description=:description"      
       
-      def create(options = {})
-        super
+      def create
         token = tokenize
         # url
         page        = agent.get("http://www.dzone.com/links/add.html")
@@ -52,16 +43,14 @@ module Ubiquitously
           checkbox.check if token[:categories].include?(checkbox.value)
         end
         
-        unless options[:debug] == true
+        unless debug?
           page = form.submit
         end
         
         true
       end
       
-      def update(options = {})
-        super
-        puts "UPDATE"
+      def update
         page = agent.get(remote.service_url)
         params = "\ncallCount=1\n"
         params << "c0-scriptName=LinkManager\n"

@@ -1,32 +1,21 @@
 module Ubiquitously
   module Reddit
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://www.reddit.com/")
         form = page.form_with(:action => "http://www.reddit.com/post/login")
         form["user"]   = username
         form["passwd"] = password
         page = form.submit
         
-        @logged_in = (page.title =~ /login or register/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.title !~ /login or register/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
+    class Post < Ubiquitously::Service::Post
       validates_presence_of :url, :title
       
-      def save(options = {})
-        return false unless valid?
-        authorize
-        
+      def create
         page = agent.get("http://www.reddit.com/submit?url=#{url}")
         key = page.body.match(/modhash\:\s+'([^']+)'/)[1]
         

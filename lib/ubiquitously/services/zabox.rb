@@ -1,9 +1,7 @@
 module Ubiquitously
   module Zabox
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://www.zabox.net/login.php")
         form = page.forms.detect { |form| form.form_node["id"] == "thisform" }
         form["username"] = username
@@ -11,22 +9,12 @@ module Ubiquitously
         form.checkboxes.first.check
         page = form.submit
         
-        @logged_in = (page.parser.css("form .error").text =~ /ERROR/i).nil?
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.parser.css("form .error").text !~ /ERROR/i)
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      def save(options = {})
-        return false if !valid?
-        
-        authorize
-        
+    class Post < Ubiquitously::Service::Post
+      def create
         page = agent.get("http://www.zabox.net/submit")
       end
     end

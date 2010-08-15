@@ -1,5 +1,5 @@
 module Ubiquitously
-  class User
+  class User < Base
     attr_accessor :username, :cookies, :agent, :accounts, :cookies_path, :name, :email
     
     def initialize(attributes = {})
@@ -11,9 +11,7 @@ module Ubiquitously
         attributes[:agent].user_agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; ru-ru) AppleWebKit/533.2+ (KHTML, like Gecko) Version/4.0.4 Safari/531.21.10"
       end
       
-      attributes.each do |key, value|
-        self.send("#{key.to_s}=", value) if self.respond_to?(key)
-      end
+      apply attributes
       
       raise 'where will cookies be saved??' unless self.cookies_path
       

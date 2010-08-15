@@ -1,14 +1,11 @@
 module Ubiquitously
-  class Post
+  class Post < Base
     attr_accessor :url, :title, :description, :tags, :categories, :user, :page, :posts, :format, :extension
 
     def initialize(attributes = {})
-      attributes.each do |key, value|
-        self.send("#{key.to_s}=", value) if self.respond_to?(key)
-      end
+      apply attributes
       raise 'please pass Post a User' if self.user.blank?
       self.posts ||= []
-      
     end
     
     def page

@@ -1,9 +1,7 @@
 module Ubiquitously
   module Slideshare
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
-        return true if logged_in?
-        
         page = agent.get("http://www.slideshare.net/login")
         form = page.form_with(:action => "/login")
         form["user_login"] = username
@@ -12,22 +10,12 @@ module Ubiquitously
         form["login"] = "Login"
         page = form.submit
         
-        @logged_in = page.uri != "http://www.slideshare.net/login"
-        
-        unless @logged_in
-          raise AuthenticationError.new("Invalid username or password for #{service_name.titleize}")
-        end
-        
-        @logged_in
+        authorized?(page.uri != "http://www.slideshare.net/login")
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      def save(options = {})
-        authorize
-        
-        token = tokenize
-        
+    class Post < Ubiquitously::Service::Post
+      def create
         page = agent.get(url)
         
         header = {

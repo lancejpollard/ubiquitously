@@ -1,6 +1,6 @@
 module Ubiquitously
   module Tweako
-    class Account < Ubiquitously::Base::Account
+    class Account < Ubiquitously::Service::Account
       def login
         return true if logged_in?
         
@@ -20,8 +20,7 @@ module Ubiquitously
       end
     end
     
-    class Post < Ubiquitously::Base::Post
-      validates_presence_of :url, :title, :tags, :description
+    class Post < Ubiquitously::Service::Post
       # Either your first 400 characters will be used,
       # or you can determine where the teaser ends
       # by starting a new paragraph before the first 400 characters.
@@ -34,17 +33,11 @@ module Ubiquitously
       def tokenize
         super.merge(
           :description => self.description[0..400],
-          :tags => self.tags[0..6].map { |tag| tag.downcase.gsub(/[^a-z0-9]/, " ").squeeze(" ") }.join(", ")
+          :tags => self.tags[0..6].taggify(" ", ", ")
         )
       end
       
-      def save(options = {})
-        return false unless valid?
-        
-        authorize
-        
-        token = tokenize
-        
+      def create
         page = agent.get("http://www.tweako.com/node/add/storylink")
         form = page.forms.detect { |form| form.form_node["id"] == "node-form" }
         
@@ -57,7 +50,7 @@ module Ubiquitously
         form["edit[body]"] = token[:description]
         form["op"] = "Submit"
         
-        unless options[:debug] == true
+        unless debug?
           page = form.submit
         end
         
