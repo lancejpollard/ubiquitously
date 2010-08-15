@@ -48,7 +48,9 @@ module Ubiquitously
       unless service.is_a?(String)
         service = service.service
       end
+      puts "account_for(#{service.inspect})"
       login(service)
+      puts "ACCOUNTS: #{self.accounts.inspect}"
       self.accounts.detect { |account| account.service == service }
     end
     

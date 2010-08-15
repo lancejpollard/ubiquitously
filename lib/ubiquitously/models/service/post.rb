@@ -46,6 +46,10 @@ module Ubiquitously
         # for httparty
         @auth = {:username => username, :password => password}
       end
+      
+      def remote
+        @remote ||= self.class.find(:url => self.url, :user => self.user)
+      end
     end
   end
 end

@@ -17,7 +17,6 @@ module Ubiquitously
       submit_to "http://digg.com/submit?phase=2&url=:url&title=:title&bodytext=:description&topic=26"
       
       def create
-        raise token.inspect
         # url
         page        = agent.get("http://digg.com/submit/")
         form        = page.forms.detect {|form| form.form_node["id"] == "thisform"}
@@ -71,7 +70,6 @@ module Ubiquitously
       end
       
       def update
-        raise token.inspect
         key = nil
         page = agent.get(remote.service_url)
         page.parser.css("script").each do |script|

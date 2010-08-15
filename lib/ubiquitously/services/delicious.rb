@@ -1,6 +1,9 @@
 module Ubiquitously
   module Delicious
     class Account < Ubiquitously::Service::Account
+      def login
+        true
+      end
     end
     
     class Post < Ubiquitously::Service::Post
@@ -13,25 +16,25 @@ module Ubiquitously
       end
       
       def create
-        unless debug?
-          self.class.get(
-            "/posts/add",
-            :query => {
-              :url => url,
-              :description => title,
-              :extended => description,
-              :tags => tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, "-").squeeze("-") }.join(" ")
-            },
-            :basic_auth => @auth
-          )
-        end
-        
+        puts "CREATE #{@auth.inspect}"
+        res = self.class.get(
+          "/posts/add",
+          :query => {
+            :url => url,
+            :description => title,
+            :extended => description,
+            :tags => tags.map { |tag| tag.downcase.gsub(/[^a-z0-9]/, "-").squeeze("-") }.join(" ")
+          },
+          :basic_auth => @auth
+        )
+        puts "RESPONSE: #{res.inspect}"
         true
       end
       
       def remote(options = {})
+        return nil
         raise "what url to do want" if self.url.nil?
-        self.class.find(options.merge(
+        @remote ||= self.class.find(options.merge(
           :query => {
             :url => CGI.escape(self.url)
           },

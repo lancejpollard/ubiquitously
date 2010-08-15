@@ -8,7 +8,7 @@ module Ubiquitously
     
       module ClassMethods
       end
-    
+      
       module InstanceMethods
         def agent
           user.agent
@@ -17,11 +17,11 @@ module Ubiquitously
         def username
           user.username_for(self)
         end
-      
+        
         def password
           user.password_for(self)
         end
-      
+        
         def authorize
           user.login(service)
         end

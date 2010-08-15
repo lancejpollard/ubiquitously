@@ -11,7 +11,6 @@ require 'active_support'
 require 'active_model'
 
 this = File.dirname(__FILE__)
-Dir["#{this}/ext/*"].each { |c| require c }
 
 module Ubiquitously
   class SettingsError < StandardError; end
@@ -61,6 +60,7 @@ module Ubiquitously
   end
 end
 
+Dir["#{this}/ubiquitously/extensions/*"].each { |c| require c }
 Dir["#{this}/ubiquitously/models/*"].each { |c| require c unless File.directory?(c) }
 Dir["#{this}/ubiquitously/services/*"].each { |c| require c unless File.directory?(c) }
 

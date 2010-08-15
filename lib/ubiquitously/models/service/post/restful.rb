@@ -11,7 +11,7 @@ module Ubiquitously
         def restful
           subclassable_callbacks :create, :update, :destroy
         end
-      
+        
         def create(attributes = {})
           record = new(attributes)
           record.save
@@ -23,8 +23,12 @@ module Ubiquitously
           record.save!
           record
         end
+        
+        def find(options = {})
+          nil
+        end
       end
-    
+      
       module InstanceMethods
       
         def save
@@ -39,12 +43,8 @@ module Ubiquitously
           save || raise(Ubiquitously::RecordInvalid.new("Record is invalid: #{self.errors.full_messages}"))
         end
         
-        def remote
-          @remote ||= self.class.find(:url => self.url, :user => self.user)
-        end
-        
         def new_record?
-          remote.blank?
+          self.remote.blank?
         end
       end
     end

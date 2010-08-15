@@ -20,11 +20,11 @@ module Ubiquitously
             end
             authorize
             return false unless new_record?
-            logger.info "[create:before] #{inspect}"
+            logger.info "[create:before] #{tokenize.inspect}"
           end
           
           after_create do
-            logger.info "[create:after] #{inspect}"
+            logger.info "[create:after] #{tokenize.inspect}"
           end
           
           before_update do
@@ -33,11 +33,11 @@ module Ubiquitously
               return false
             end
             authorize
-            logger.info "[update:before] #{inspect}"
+            logger.info "[update:before] #{tokenize.inspect}"
           end
-
+          
           after_update do
-            logger.info "[update:after] #{inspect}"
+            logger.info "[update:after] #{tokenize.inspect}"
           end
         end
         
@@ -54,9 +54,9 @@ module Ubiquitously
         def logger
           self.class.logger
         end
-      
+        
         def inspect
-          "#<#{self.class.inspect} @url=#{self.url.inspect} @title=#{self.title.inspect} @description=#{self.description.inspect} @tags=#{self.tags.inspect}>"
+          "#<#{self.class.inspect} @url=#{self.url.inspect} @title=#{self.title.inspect} @tags=#{self.tags.inspect} @categories=#{self.categories.inspect}>"
         end
       end
     end
