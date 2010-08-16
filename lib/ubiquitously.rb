@@ -70,6 +70,7 @@ end
 Dir["#{this}/ubiquitously/extensions/*"].each { |c| require c }
 Dir["#{this}/ubiquitously/models/*"].each { |c| require c unless File.directory?(c) }
 Dir["#{this}/ubiquitously/services/*"].each { |c| require c unless File.directory?(c) }
+Dir["#{this}/ubiquitously/support/*"].each { |c| require c unless File.directory?(c) }
 
 overrides = Dir["#{this}/ubiquitously/services/*"].map do |file|
   name = File.basename(file).split(".").first.camelize

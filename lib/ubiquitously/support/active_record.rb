@@ -6,7 +6,7 @@ module Ubiquitously
       end
       
       module ClassMethods
-        cattr_accessor :ubiquitously_accounts
+        attr_accessor :ubiquitously_accounts
         
         def ubiquitous(*args)
           self.ubiquitously_accounts = args.flatten.map(&:to_s).uniq.map do |service|

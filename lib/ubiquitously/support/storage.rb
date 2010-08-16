@@ -5,11 +5,11 @@ module Ubiquitously
         
       end
       
-      def push(cookies, credentials)
+      def save(cookies, credentials)
         
       end
       
-      def pull
+      def load
         
       end
     end
@@ -21,12 +21,12 @@ module Ubiquitously
         self.path = path
       end
       
-      def push(cookies, credentials)
+      def save(cookies, credentials)
         write("#{path}/cookies.yml", cookies)
         write("#{path}/credentials.yml", credentials)
       end
       
-      def pull
+      def load
         {
           :cookies => read("#{path}/cookies.yml"),
           :credentials => read("#{path}/credentials.yml")
@@ -34,7 +34,9 @@ module Ubiquitously
       end
       
       def read(path)
-        File.exists?(path) ? YAML.load_file(path) : {}
+        result = File.exists?(path) ? YAML.load_file(path) : {}
+        result = {} unless result.is_a?(Hash)
+        result
       end
       
       def write(path, content)
@@ -51,14 +53,14 @@ module Ubiquitously
         self.credentials_attribute = credentials_attribute
       end
       
-      def push(cookies, credentials)
+      def save(cookies, credentials)
         record.update_attributes(
           cookies_attribute => cookies,
           credentials_attribute => credentials
         )
       end
       
-      def pull
+      def load
         {
           :cookies => record.read_attribute(cookies_attribute),
           :credentials => record.read_attribute(credentials_attribute)

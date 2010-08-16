@@ -2,6 +2,7 @@ module Ubiquitously
   module Facebook
     class Account < Ubiquitously::Service::Account
       def login
+        raise "LOGIN #{self.inspect}"
         url = "http://localhost:4567/"
         authorize_url = FacebookToken.authorize(url)
         page = agent.get(authorize_url, [], url)

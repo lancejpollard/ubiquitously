@@ -26,9 +26,9 @@ module Ubiquitously
     end
     
     def accountables(*items)
-      items.flatten.inject(self.accounts) do |accounts, item|
-        next if accounts.detect { |account| account.service == item.to_s }
-        accounts << "Ubiquitously::#{name.to_s.camelize}::Account".constantize.new(
+      items.flatten.map(&:to_s).inject(self.accounts) do |accounts, item|
+        next if accounts.detect { |account| account.service == item }
+        accounts << "Ubiquitously::#{item.camelize}::Account".constantize.new(
           :user => self
         )
         accounts
@@ -37,16 +37,13 @@ module Ubiquitously
     
     def login(*services)
       load
-      accountables(*services).map(&:login)
+      accountables(*services)#.map(&:login)
       save
     end
     
     def load
-      hash = storage.load
-      agent.cookie_jar.jar = hash[:cookies]
-      accountables(hash[:credentials]).each do |account|
-        account.credentials.merge!(hash[account.service.to_s])
-      end
+      puts storage.load.inspect
+      apply storage.load
     end
     
     def save
@@ -57,6 +54,10 @@ module Ubiquitously
       self.agent.cookie_jar.jar
     end
     
+    def cookies=(hash)
+      agent.cookie_jar.jar = hash
+    end
+    
     def credentials
       self.accounts.inject({}) do |hash, account|
         hash[account.service] = account.credentials.stringify_keys
@@ -64,9 +65,27 @@ module Ubiquitously
       end
     end
     
-    def cookies_for?(service)
+    def credentials=(hash)
+      accountables(hash.keys).each do |account|
+        account.credentials.merge!(hash[account.service])
+      end
+    end
+    
+    def cookies_for(service)
       name = service_cookie_name(service.to_s)
-      !cookies.keys.detect { |domain| domain.downcase =~ /#{name}/ }.blank?
+      cookies.keys.detect { |domain| domain.downcase =~ /#{name}/ }
+    end
+    
+    def cookies_for?(service)
+      !cookies_for(service).blank?
+    end
+    
+    def credentials_for(service)
+      credentials[service.to_s]
+    end
+    
+    def credentials_for?(service)
+      !credentials_for(service).blank?
     end
     
     def service_cookie_name(service)
