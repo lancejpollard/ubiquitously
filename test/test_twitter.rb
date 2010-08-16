@@ -1,27 +1,21 @@
 require File.dirname(__FILE__) + '/test_helper.rb'
 
 module Ubiquitously
-  class FacebookTest < ActiveSupport::TestCase
-    context "Facebook::Account" do
+  class TwitterTest < ActiveSupport::TestCase
+    context "Twitter::Account" do
       setup do
         create_user(:storage => "test/config")
       end
-      
-      context "login" do
-        should "login successfully if valid credentials" do
-          assert_equal true, @user.login(:facebook)
-        end
-      end
     end
 
-    context "Facebook::Post" do
+    context "Twitter::Post" do
       setup do
         create_user(:storage => "test/config")
 
         @title = "Viatropos"
-        @description = "Facebook posting ubiquitously"
+        @description = "Mechanically logging in"
         @tags = %w(ubiquitous)
-
+        
         @post = Ubiquitously::Post.new(
           :url => "./test/meta.html",
           :title => @title,
@@ -32,9 +26,8 @@ module Ubiquitously
       end
       
       should "create a post" do
-        assert @post.save(:facebook)
+        assert @post.save(:twitter)
       end
     end
-    
   end
 end

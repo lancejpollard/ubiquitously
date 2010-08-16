@@ -27,14 +27,12 @@ module Ubiquitously
     
     def accountables(*items)
       services = items.flatten.map(&:to_s)
-      services.inject(self.accounts) do |accounts, service|
-        next if accounts.detect { |account| account.service == service }
-        accounts << "Ubiquitously::#{service.camelize}::Account".constantize.new(
+      services.each do |service|
+        next if self.accounts.detect { |account| account.service == service }
+        self.accounts << "Ubiquitously::#{service.camelize}::Account".constantize.new(
           :user => self
         )
-        accounts
       end
-      
       self.accounts.select { |account| services.include?(account.service) }
     end
     
@@ -75,7 +73,6 @@ module Ubiquitously
     end
     
     def cookies_for(service)
-      puts agent.cookie_jar.jar.keys.inspect
       name = service_cookie_name(service.to_s)
       result = cookies.keys.detect { |domain| domain.downcase =~ /#{name}/ }
       return nil if result.blank?
@@ -115,7 +112,7 @@ module Ubiquitously
     
     def account_for(service)
       service = service.service unless service.is_a?(String)
-      self.accounts.detect { |account| account.service == service }
+      accountables(*service).detect { |account| account.service == service }
     end
   end
 end

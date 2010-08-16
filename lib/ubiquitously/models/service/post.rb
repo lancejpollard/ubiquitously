@@ -50,6 +50,10 @@ module Ubiquitously
       def remote
         @remote ||= self.class.find(:url => self.url, :user => self.user)
       end
+      
+      def access_token
+        user.account_for(self).access_token
+      end
     end
   end
 end

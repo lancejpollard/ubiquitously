@@ -18,6 +18,7 @@ module Ubiquitously
           end
           
           after_login do
+            user.save
             logger.info "[login:after] #{inspect}"
           end
         end

@@ -41,6 +41,17 @@ module Ubiquitously
         !self.credentials.blank?
       end
       
+      def access_token
+        if uses?(:oauth) && @access_token.blank?
+          @access_token = "#{service.camelize}Token".constantize.new
+          @access_token.token = credentials["token"]
+          @access_token.secret = credentials["secret"]
+          @access_token.key = credentials["key"]
+        end
+        
+        @access_token
+      end
+      
     end
   end
 end

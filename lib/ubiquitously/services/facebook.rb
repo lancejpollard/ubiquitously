@@ -32,7 +32,9 @@ module Ubiquitously
     
     class Post < Ubiquitously::Service::Post
       def create
-        page = agent.get("")
+        access_token.post("https://graph.facebook.com/me/feed", {
+          "message" => token[:description]
+        })
       end
     end
   end

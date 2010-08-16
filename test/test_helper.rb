@@ -14,10 +14,7 @@ Ubiquitously.configure("test/config/secrets.yml")
 Passport.configure("test/config/tokens.yml")
 
 ActiveSupport::TestCase.class_eval do
-  def create_user
-    @user = Ubiquitously::User.new(
-      :username => "viatropos",
-      :cookies_path => "test/cookies.yml"
-    )
+  def create_user(options)
+    @user = Ubiquitously::User.new(options.merge(:username => "viatropos"))
   end
 end

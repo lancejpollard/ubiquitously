@@ -19,6 +19,10 @@ module Ubiquitously
           page = form.submit
         end
         
+        if page.uri.to_s =~ /http:\/\/api\.twitter\.com\/oauth\/authenticate/i
+          page = page.forms.last.submit
+        end
+        
         authorize!(page.title =~ /Redirecting you back to the application/i)
         
         location = URI.parse(page.links.first.href)
@@ -37,7 +41,16 @@ module Ubiquitously
     
     class Post < Ubiquitously::Service::Post
       def create
-        page = agent.get("")
+        response = access_token.post("/statuses/update.json", {
+          "status" => token[:description],
+          "include_entities" => true
+        })
+        
+        result = JSON.parse(response.body)
+        
+        if result.has_key?("error")
+          raise result["error"].to_s
+        end
       end
     end
   end
