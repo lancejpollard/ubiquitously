@@ -7,19 +7,14 @@ module Ubiquitously
       include Ubiquitously::Account::Loggable
       include Ubiquitously::Account::Authorizable
       
-      attr_accessor :username, :password, :data
-      attr_accessor :agent, :logged_in, :ip
+      attr_accessor :username, :password, :credentials
+      attr_accessor :logged_in, :ip, :user
       
       def initialize(attributes = {})
         attributes = attributes.symbolize_keys
         
         attributes[:username] = Ubiquitously.key("#{service}.key") if attributes[:username].blank?
         attributes[:password] = Ubiquitously.key("#{service}.secret") if attributes[:password].blank?
-        unless attributes[:agent]
-          attributes[:agent] = Mechanize.new
-          #attributes[:agent].log = Logger.new(STDOUT)
-          attributes[:agent].user_agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; ru-ru) AppleWebKit/533.2+ (KHTML, like Gecko) Version/4.0.4 Safari/531.21.10"
-        end
         
         if attributes[:username].blank? || attributes[:password].blank?
           raise "Where is the username and password for #{service}?"
@@ -30,8 +25,20 @@ module Ubiquitously
         apply attributes
       end
       
-      def data
-        @data ||= {}
+      def credentials
+        @credentials ||= {}
+      end
+      
+      def agent
+        user.agent
+      end
+      
+      def cookies?
+        user.cookies_for?(service)
+      end
+      
+      def credentials?
+        !self.credentials.blank?
       end
       
     end

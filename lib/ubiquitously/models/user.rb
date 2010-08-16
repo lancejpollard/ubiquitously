@@ -1,9 +1,12 @@
 module Ubiquitously
   class User < Base
-    attr_accessor :username, :cookies, :agent, :accounts, :cookies_path, :name, :email
+    attr_accessor :username, :name, :email
+    attr_accessor :agent, :cookies, :accounts, :storage
     
     def initialize(attributes = {})
       attributes = attributes.symbolize_keys
+      
+      raise "Please define 'storage'" unless attributes[:storage]
       
       unless attributes[:agent]
         attributes[:agent] = Mechanize.new
@@ -11,70 +14,59 @@ module Ubiquitously
         attributes[:agent].user_agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; ru-ru) AppleWebKit/533.2+ (KHTML, like Gecko) Version/4.0.4 Safari/531.21.10"
       end
       
+      if attributes[:storage].is_a?(String)
+        attributes[:storage] = Ubiquitously::Storage::FileSystem.new(attributes[:storage])
+      end
+      
       apply attributes
-      
-      raise 'where will cookies be saved??' unless self.cookies_path
-      
-      self.accounts ||= []
+    end
+    
+    def accounts
+      @accounts ||= []
+    end
+    
+    def accountables(*items)
+      items.flatten.inject(self.accounts) do |accounts, item|
+        next if accounts.detect { |account| account.service == item.to_s }
+        accounts << "Ubiquitously::#{name.to_s.camelize}::Account".constantize.new(
+          :user => self
+        )
+        accounts
+      end
     end
     
     def login(*services)
-      data = load
-      services.flatten.each do |name|
-        account = "Ubiquitously::#{name.to_s.camelize}::Account".constantize.new(:agent => self.agent)
-        if has_cookie_for(name) || !account.respond_to?(:login)
-          account.data = data[account.service]
-          account.logged_in = true
-        else
-          account.login
-        end
-        self.accounts << account unless self.accounts.include?(account)
-      end
-      
+      load
+      accountables(*services).map(&:login)
       save
     end
     
     def load
-      load_cookies if File.exists?(self.cookies_path)
-      load_data
-    end
-    
-    def load_cookies(path = self.cookies_path)
-      self.agent.cookie_jar.load(path)
-    end
-    
-    def load_data
-      to = "test/config/data.yml"
-      File.exists?(to) ? YAML.load_file(to) : {}
+      hash = storage.load
+      agent.cookie_jar.jar = hash[:cookies]
+      accountables(hash[:credentials]).each do |account|
+        account.credentials.merge!(hash[account.service.to_s])
+      end
     end
     
     def save
-      save_cookies
-      save_data
-      !self.accounts.blank?
+      storage.save(cookies, credentials)
     end
     
-    def save_cookies(path = self.cookies_path)
-      self.agent.cookie_jar.save_as(path)
+    def cookies
+      self.agent.cookie_jar.jar
     end
     
-    def save_data
-      data = self.accounts.inject({}) do |hash, account|
-        hash[account.service] = account.data.stringify_keys
+    def credentials
+      self.accounts.inject({}) do |hash, account|
+        hash[account.service] = account.credentials.stringify_keys
         hash
       end
-      
-      to = "test/config/data.yml"
-      content = File.exists?(to) ? YAML.load_file(to) : {}
-      content.merge!(data)
-      File.open(to, "w+") { |file| file.puts YAML.dump(content) }
     end
     
-    def has_cookie_for(service)
+    def cookies_for?(service)
       name = service_cookie_name(service.to_s)
-      !self.agent.cookie_jar.jar.keys.detect do |domain|
-        domain.downcase =~ /#{name}/
-      end.blank?
+      !cookies.keys.detect { |domain| domain.downcase =~ /#{name}/ }.blank?
     end
     
     def service_cookie_name(service)
@@ -92,7 +84,6 @@ module Ubiquitously
     
     def account_for(service)
       service = service.service unless service.is_a?(String)
-      login service
       self.accounts.detect { |account| account.service == service }
     end
   end

@@ -21,6 +21,10 @@ end
 
 class Mechanize::CookieJar
   public
+  def jar=(hash)
+    @jar = hash
+  end
+  
   def save_string
     return YAML::dump(@jar)
   end

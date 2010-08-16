@@ -18,7 +18,7 @@ module Ubiquitously
         code = Rack::Utils.parse_query(location.query)["code"]
         
         # do something with the oauth token, save it in the cookie?
-        self.data = FacebookToken.access(:secret => code, :callback_url => url)
+        self.credentials = FacebookToken.access(:secret => code, :callback_url => url)
                 
         authorize!(page.uri !~ /http:\/\/login\.facebook\.com\/login\.php/i)
       end
