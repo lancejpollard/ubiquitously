@@ -76,4 +76,5 @@ overrides = Dir["#{this}/ubiquitously/services/*"].map do |file|
   name = File.basename(file).split(".").first.camelize
   ["Ubiquitously::#{name}::Account".constantize, "Ubiquitously::#{name}::Post".constantize]
 end.flatten
+
 SubclassableCallbacks.override(*overrides)

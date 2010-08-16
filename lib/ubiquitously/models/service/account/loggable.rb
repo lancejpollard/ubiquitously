@@ -9,9 +9,9 @@ module Ubiquitously
     
       module ClassMethods
         def loggable
-          before_login do 
-            if logged_in? || cookies?
-              @logged_in = true
+          before_login do
+            if authorized?
+              @logged_in = true 
               return false
             end
             logger.info "[login:before] #{inspect}"

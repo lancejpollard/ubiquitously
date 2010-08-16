@@ -26,23 +26,26 @@ module Ubiquitously
     end
     
     def accountables(*items)
-      items.flatten.map(&:to_s).inject(self.accounts) do |accounts, item|
-        next if accounts.detect { |account| account.service == item }
-        accounts << "Ubiquitously::#{item.camelize}::Account".constantize.new(
+      services = items.flatten.map(&:to_s)
+      services.inject(self.accounts) do |accounts, service|
+        next if accounts.detect { |account| account.service == service }
+        accounts << "Ubiquitously::#{service.camelize}::Account".constantize.new(
           :user => self
         )
         accounts
       end
+      
+      self.accounts.select { |account| services.include?(account.service) }
     end
     
     def login(*services)
       load
-      accountables(*services)#.map(&:login)
+      accountables(*services).map(&:login)
       save
+      true
     end
     
     def load
-      puts storage.load.inspect
       apply storage.load
     end
     
@@ -72,8 +75,17 @@ module Ubiquitously
     end
     
     def cookies_for(service)
+      puts agent.cookie_jar.jar.keys.inspect
       name = service_cookie_name(service.to_s)
-      cookies.keys.detect { |domain| domain.downcase =~ /#{name}/ }
+      result = cookies.keys.detect { |domain| domain.downcase =~ /#{name}/ }
+      return nil if result.blank?
+      uri = URI.parse("http://#{result}")
+      unless agent.cookie_jar.empty?(uri)
+        cookies = agent.cookie_jar.cookies(uri)
+        cookie = cookies.length > 0 ? cookies.join("; ") : nil
+      else
+        cookie = nil
+      end
     end
     
     def cookies_for?(service)
