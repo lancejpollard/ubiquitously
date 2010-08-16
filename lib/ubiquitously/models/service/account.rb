@@ -7,7 +7,7 @@ module Ubiquitously
       include Ubiquitously::Account::Loggable
       include Ubiquitously::Account::Authorizable
       
-      attr_accessor :username, :password
+      attr_accessor :username, :password, :data
       attr_accessor :agent, :logged_in, :ip
       
       def initialize(attributes = {})
@@ -28,6 +28,10 @@ module Ubiquitously
         @logged_in = false
         
         apply attributes
+      end
+      
+      def data
+        @data ||= {}
       end
       
     end

@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'open-uri'
 require 'cgi'
+require 'rack/utils'
 require 'yaml'
 require 'json'
 require 'mechanize'
@@ -9,6 +10,7 @@ require 'logger'
 require 'httparty'
 require 'active_support'
 require 'active_model'
+require 'passport'
 
 this = File.dirname(__FILE__)
 
@@ -20,6 +22,11 @@ module Ubiquitously
   
   class << self
     attr_accessor :config, :logger
+    
+    def run(args)
+      command = args.shift
+      "Ubiquitously::Commands::#{command.camelize}".run(args)
+    end
     
     def configure(value)
       self.config = value.is_a?(String) ? YAML.load_file(value) : value

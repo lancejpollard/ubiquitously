@@ -9,3 +9,6 @@ doc/**/*
 *.gemspec
 test/config.yml
 test/cookies.yml
+test/config
+test/config/*
+test/config/**/*

@@ -8,7 +8,7 @@ module Ubiquitously
         form["password"] = password
         page = form.submit
         
-        authorized?(page.title =~ /Some title/i)
+        authorize!(page.title =~ /Some title/i)
       end
     end
     

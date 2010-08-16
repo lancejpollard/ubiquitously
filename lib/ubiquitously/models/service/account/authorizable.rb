@@ -28,6 +28,7 @@ module Ubiquitously
         def logged_in?
           @logged_in == true
         end
+        
       end
     end
   end

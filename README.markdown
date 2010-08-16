@@ -58,7 +58,7 @@ Each service requires different things, which are determined by the `validates_p
 2. Tumblelogging (tumblr, posterous)
 3. Blogging (large posts)
 4. Bookmarking (delicious, diigo, mixx, newsvine, reddit, digg...)
-5. Code Sharing (gist, snipplr, dzone snippets, snipt, flikode)
+5. Code Sharing (gist, snipplr, dzone snippets, snipt, flikode, smipple)
 
 ## How it works
 
@@ -209,11 +209,21 @@ Programming, Ruby, Rails, Development, textmate (911)javascript (791)css (747)ph
 - http://www.digalist.com
 - listiki.com
 - tipbo.com
-
-There a whole bunch of social websites online which allow you to insert a link to your website on the profile page. Sign up for some of them, preferably using a username and avatar that brands your business or you as a person. This might come in useful when you decide to promote your site via the social website in the future.
+Social Media Profiles. There a whole bunch of social websites online which allow you to insert a link to your website on the profile page. Sign up for some of them, preferably using a username and avatar that brands your business or you as a person. This might come in useful when you decide to promote your site via the social website in the future.
 
 Ask yourself the following questions about the linkability of your content:
+Am I Digging this because I want others to see it, and pressing a single button is an easy way for me to say “this is cool?”  
+Or am I Digging this because People need to know about this, because they can’t live without it or because without it they would be out of the loop.
+Is it possible that my information is so new and/or informative that I will actually become an authority on this information, or serve as a reference for others interested in writing about similar content?
 
-- Am I Digging this because I want others to see it, and pressing a single button is an easy way for me to say "this is cool?"
-- Or am I Digging this because People need to know about this, because they can't live without it or because without it they would be out of the loop.
-- Is it possible that my information is so new and/or informative that I will actually become an authority on this information, or serve as a reference for others interested in writing about similar content?
+- evernote
+- http://www.rubyflow.com
+
+## Command-line
+
+It will save your login data (cookies and oauth tokens) in `~/.u.me`
+
+    u.me user facebook -u "your@email.com" -p "your-pass"
+    u.me post digg -t "Oauth on the Command line!?" -d "You can now use Oauth from the command line" -t "oauth, ruby, unix" -u "http://ubiquitously.me"
+
+> It is only one step more to make it so we fully create all the user accounts if they don't exist on all the services

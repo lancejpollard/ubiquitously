@@ -1,7 +1,7 @@
 module Ubiquitously
   class Post < Base
     attr_accessor :url, :title, :description, :tags, :categories, :user, :page, :posts, :format, :extension
-
+    
     def initialize(attributes = {})
       apply attributes
       raise 'please pass Post a User' if self.user.blank?

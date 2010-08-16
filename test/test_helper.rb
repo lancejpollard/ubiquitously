@@ -10,7 +10,8 @@ require 'rr'
 
 require File.dirname(__FILE__) + '/../lib/ubiquitously'
 
-Ubiquitously.configure("test/config.yml")
+Ubiquitously.configure("test/config/secrets.yml")
+Passport.configure("test/config/tokens.yml")
 
 ActiveSupport::TestCase.class_eval do
   def create_user
