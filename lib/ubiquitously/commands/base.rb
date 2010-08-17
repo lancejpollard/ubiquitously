@@ -60,13 +60,40 @@ module Ubiquitously
         File.expand_path("~/.u.me")
       end
       
+      def show
+        tmp = File.join(main_folder, "post.yml")
+        post = ""
+        post << "services: \n"
+        post << "url: \n"
+        post << "title: \n"
+        post << "description: \n"
+        post << "tags: \n"
+        write(tmp, post)
+        system("open", tmp)
+        require 'timeout'
+        begin
+          Timeout::timeout(30) {
+            puts "Will timeout in 30 seconds. Press Enter when you're ready."
+            STDIN.gets.chomp
+            self.attributes = YAML.load_file(tmp).symbolize_keys
+            File.delete(tmp) if File.exists?(tmp)
+            # Something that should be interrupted if it takes too much time...
+          }
+        rescue Exception => e
+          puts e.inspect
+          puts "Resubmit post with same command.  Finished process executing to clean things up."
+        end
+        
+      end
+      
       def initialize(args)
         configure(main_folder)
         self.services = []
+        self.attributes = {}
+        show if args.blank?
         self.services << args.shift while args.length > 0 && args.first !~ /^-/
-        title = self.services.pop unless Ubiquitously.include?(self.services.last)
-        self.attributes = parse_options(args)
-        self.attributes[:title] = title if title
+        self.attributes[:title] = self.services.pop unless Ubiquitously.include?(self.services.last)
+        self.attributes = parse_options(args, attributes)
         
         self.attributes.each do |key, value|
           self.send("#{key.to_s}=", value) if self.respond_to?(key)

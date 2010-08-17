@@ -38,13 +38,13 @@ Fill out `test/config.yml` with your credentials for the different services, the
 
 You can post to any of these services (even via oauth) completely from the command line.
 
-    u.me post twitter "This is really crazy"
+    u.me post twitter "Check out xyz!"
 
 The anatomy of a command is this:
 
     u.me post [services] [title] [options]
 
-The `[services]` are a list of services you this command to post to, and the `[title]` is whatever follows (in single/double quotes).  The following will post to Twitter, Tumblr, and Posterous:
+The `[services]` are a list of services you want this command to post to, and the `[title]` is whatever follows (in single/double quotes).  The following will post to Twitter, Tumblr, and Posterous:
 
     u.me post twitter tumblr posterous "Managing multiple interfaces"
     

@@ -2,10 +2,6 @@ module Ubiquitously
   module Command
     class Post < Ubiquitously::Command::Base
       
-      def service
-        services.first
-      end
-      
       def run
         user = Ubiquitously::User.new(:storage => main_folder)
         user.accountables(services) do |account|
@@ -26,8 +22,8 @@ module Ubiquitously
         attributes
       end
       
-      def parse_options(args)
-        attributes = {}
+      def parse_options(args, attributes = {})
+
         option_parser = OptionParser.new do |o|
           o.extend Ubiquitously::Command::Post::Opts
           o.options(attributes)
