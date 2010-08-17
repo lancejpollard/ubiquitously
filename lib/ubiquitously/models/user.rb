@@ -10,7 +10,7 @@ module Ubiquitously
       
       unless attributes[:agent]
         attributes[:agent] = Mechanize.new
-        attributes[:agent].log = Logger.new(STDOUT)
+        #attributes[:agent].log = Logger.new(STDOUT)
         attributes[:agent].user_agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; ru-ru) AppleWebKit/533.2+ (KHTML, like Gecko) Version/4.0.4 Safari/531.21.10"
       end
       
