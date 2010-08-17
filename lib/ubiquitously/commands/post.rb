@@ -3,98 +3,102 @@ module Ubiquitously
     class Post < Ubiquitously::Command::Base
       
       def run
-        Ubiquitously::Post.new(attributes).save(services)
+        user = Ubiquitously::User.new(:storage => ".")
+        user.accountables(services) do |account|
+          account = account.new(
+            :user => user,
+            :username => attributes[:username],
+            :password => attributes[:password]
+          )
+        end
+        Ubiquitously::Post.new(attributes.merge(:user)).save(services)
       end
       
-      def options(args)
+      def required(attributes)
+        missing = %w(description username password).delete_if { |i| !attributes[i.to_sym].blank? }
+        unless missing.blank?
+          raise CommandInvalid.new("Missing arguments for post: #{missing.join(", ")}")
+        end
+        attributes
+      end
+      
+      def parse_options(args)
+        attributes = {}
         option_parser = OptionParser.new do |o|
-          o.extend Ubiquitously::Opts
+          o.extend Ubiquitously::Command::Post::Opts
+          o.options(attributes)
           
           o.banner = "Usage: u.me [command] [service(s)] [options]\n" +
                      "\n" +
-                     "Supported Commands:\n#{SUPPORTED_COMMANDS.sort.join(', ')}"
+                     "Supported Commands:\n#{Ubiquitously.services.sort.join(', ')}"
           
-          o.section "Authorization options:" do
+          o.section "Post attributes:" do
+            url
+            title
+            description
+            tags
             username
             password
-            consumer_key
-            consumer_secret
-            access_token
-            password
-          end
-          
-          o.section "Common options:" do
-            trace
-            data
-            host
-            quiet
-            disable_ssl
-            request_method
-            help
           end
         end
-
+        
         option_parser.parse!(args)
+        
+        required attributes
       end
-    
+      
       module Opts
-
+        
+        def options(value = nil)
+          @options = value if value
+          @options
+        end
+        
         def section(heading, &block)
           separator ""
           separator heading
-
+          
           instance_eval(&block)
         end
         
-        def consumer_key
-          on('-c', '--consumer-key [key]', "Your consumer key (required)") do |key|
-            options.consumer_key = key ? key : CLI.prompt_for('Consumer key')
-          end
-        end
-        
-        def consumer_secret
-          on('-s', '--consumer-secret [secret]', "Your consumer secret (required)") do |secret|
-            options.consumer_secret = secret ? secret : CLI.prompt_for('Consumer secret')
-          end
-        end
-        
-        def username
-          on('-u', '--username [username]', 'Username of account to authorize (required)') do |username|
-            options.username = username
-          end
-        end
-      
-        def password
-          on('-p', '--password [password]', 'Password of account to authorize (required)') do |password|
-            options.password = password ? password : CLI.prompt_for('Password')
-          end
-        end
-
-        def quiet
-          on('-q', '--quiet', 'Suppress all output (default: output is printed to STDOUT)') do |quiet|
-            options.output = StringIO.new
+        def url
+          on('-u', '--url URL', "Post url (required)") do |url|
+            options[:url] = url
           end
         end
         
         def title
-          
-        end
-        
-        def description
-          
-        end
-        
-        def url
-          
+          on('-l', '--title TITLE', "Post title (required)") do |title|
+            options[:title] = title
+          end
         end
         
         def tags
-          
+          on('-t', '--tags TAGS', "Post tags (required)") do |tags|
+            options[:tags] = tags.split(/,(?:\s+)?/)
+          end
+        end
+        
+        def description
+          on('-d', '--description DESCRIPTION', "Post description (required)") do |description|
+            options[:description] = description
+          end
+        end
+        
+        def username
+          on('-U', '--username [username]', "Username for service") do |username|
+            options[:username] = username
+          end
+        end
+
+        def password
+          on('-P', '--password [password]', "Password for service") do |password|
+            options[:password] = password
+          end
         end
         
         def help
           on_tail("-h", "--help", "Show this message") do
-            CLI.puts self
             exit
           end
         end

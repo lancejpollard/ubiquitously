@@ -6,7 +6,7 @@ module Ubiquitously
       def login
         # only login if we don't have cookies
         url = "http://localhost:4567/"
-        hash = TwitterToken.authorize(url)
+        hash = ::TwitterToken.authorize(url)
         options = {:url => hash[:url]}
         if cookies?
           options.merge!(:headers => {"Cookie" => user.cookies_for(:twitter)})
@@ -29,7 +29,7 @@ module Ubiquitously
         verifier = Rack::Utils.parse_query(location.query)["oauth_verifier"]
         
         # do something with the oauth token, save it in the cookie?
-        self.credentials = TwitterToken.access(
+        self.credentials = ::TwitterToken.access(
           :token => hash[:token],
           :secret => hash[:secret],
           :oauth_verifier => verifier

@@ -209,6 +209,7 @@ Programming, Ruby, Rails, Development, textmate (911)javascript (791)css (747)ph
 - http://www.digalist.com
 - listiki.com
 - tipbo.com
+
 Social Media Profiles. There a whole bunch of social websites online which allow you to insert a link to your website on the profile page. Sign up for some of them, preferably using a username and avatar that brands your business or you as a person. This might come in useful when you decide to promote your site via the social website in the future.
 
 Ask yourself the following questions about the linkability of your content:
@@ -222,8 +223,8 @@ Is it possible that my information is so new and/or informative that I will actu
 ## Command-line
 
 It will save your login data (cookies and oauth tokens) in `~/.u.me`
-
-    u.me user facebook -u "your@email.com" -p "your-pass"
+    
+    u.me post twitter "This is really crazy"
     u.me post digg -t "Oauth on the Command line!?" -d "You can now use Oauth from the command line" -t "oauth, ruby, unix" -u "http://ubiquitously.me"
 
 > It is only one step more to make it so we fully create all the user accounts if they don't exist on all the services

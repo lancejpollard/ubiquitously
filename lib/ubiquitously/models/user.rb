@@ -25,15 +25,25 @@ module Ubiquitously
       @accounts ||= []
     end
     
-    def accountables(*items)
+    def accountables(*items, &block)
       services = items.flatten.map(&:to_s)
       services.each do |service|
         next if self.accounts.detect { |account| account.service == service }
-        self.accounts << "Ubiquitously::#{service.camelize}::Account".constantize.new(
-          :user => self
-        )
+        clazz = "Ubiquitously::#{service.camelize}::Account".constantize
+        if block_given?
+          self.accounts << yield(clazz)
+        else
+          self.accounts << clazz.new(:user => self)
+        end
       end
       self.accounts.select { |account| services.include?(account.service) }
+    end
+    
+    def account_classes(*items)
+      services = items.flatten.map(&:to_s)
+      services.map do |service|
+        "Ubiquitously::#{service.camelize}::Account".constantize
+      end.select { |account| services.include?(account.service) }
     end
     
     def login(*services)

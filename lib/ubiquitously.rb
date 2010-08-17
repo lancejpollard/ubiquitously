@@ -19,13 +19,19 @@ module Ubiquitously
   class AuthenticationError < StandardError; end
   class DuplicateError < StandardError; end
   class RecordInvalid < StandardError; end
+  class CommandInvalid < StandardError; end
   
   class << self
     attr_accessor :config, :logger
     
     def run(args)
       command = args.shift
-      "Ubiquitously::Commands::#{command.camelize}".run(args)
+      unless command =~ /(?:post|user)/
+        message = "\nUbiquitously command must be for either 'post' or 'user', e.g.:\n"
+        message << "u.me post twitter 'Working with Rails today...'"
+        raise CommandInvalid.new(message)
+      end
+      "Ubiquitously::Command::#{command.camelize}".constantize.run(args)
     end
     
     def configure(value)
@@ -51,6 +57,10 @@ module Ubiquitously
       result.to_s
     end
     
+    def include?(service)
+      services.include?(service)
+    end
+    
     def credentials(service)
       result = key(service)
       unless result && result.has_key?("key") && result.has_key?("secret")
@@ -71,6 +81,7 @@ Dir["#{this}/ubiquitously/extensions/*"].each { |c| require c }
 Dir["#{this}/ubiquitously/models/*"].each { |c| require c unless File.directory?(c) }
 Dir["#{this}/ubiquitously/services/*"].each { |c| require c unless File.directory?(c) }
 Dir["#{this}/ubiquitously/support/*"].each { |c| require c unless File.directory?(c) }
+Dir["#{this}/ubiquitously/commands/*"].each { |c| require c unless File.directory?(c) }
 
 overrides = Dir["#{this}/ubiquitously/services/*"].map do |file|
   name = File.basename(file).split(".").first.camelize

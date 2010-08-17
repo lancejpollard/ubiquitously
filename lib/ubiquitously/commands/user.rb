@@ -6,7 +6,7 @@ module Ubiquitously
         Ubiquitously::User.new(attributes).login(services)
       end
       
-      def options(args)
+      def parse_options(args)
         option_parser = OptionParser.new do |o|
           o.extend Ubiquitously::Opts
           
