@@ -4,12 +4,13 @@ module Ubiquitously
       uses :oauth
       
       def login
+        had_cookies = cookies?
         url = "http://localhost:4567/"
         authorize_url = FacebookToken.authorize(url)
         page = agent.get(authorize_url, [], url)
         
         # only login if we don't have cookies
-        unless cookies?
+        unless had_cookies
           form = page.forms.detect { |form| form.form_node["id"] == "login_form" }
           form["email"] = username
           form["pass"] = password

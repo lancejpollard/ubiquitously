@@ -9,6 +9,7 @@ module Ubiquitously
         hash = ::TwitterToken.authorize(url)
         options = {:url => hash[:url]}
         if cookies?
+          raise "COOKIES"
           options.merge!(:headers => {"Cookie" => user.cookies_for(:twitter)})
           page = agent.get(options, [], url)
         else
@@ -20,7 +21,9 @@ module Ubiquitously
         end
         
         if page.uri.to_s =~ /http:\/\/api\.twitter\.com\/oauth\/authenticate/i
-          page = page.forms.last.submit
+          if page.links.first.href !~ /http:\/\/localhost/
+            page = page.forms.last.submit
+          end
         end
         
         authorize!(page.title =~ /Redirecting you back to the application/i)

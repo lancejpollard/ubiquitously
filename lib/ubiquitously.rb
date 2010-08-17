@@ -26,6 +26,10 @@ module Ubiquitously
     
     def run(args)
       command = args.shift
+      if command =~ /(secrets|tokens|cookies|credentials)/
+        system("open", File.expand_path("~/.u.me/#{$1}.yml"))
+        exit
+      end
       unless command =~ /(?:post|user)/
         message = "\nUbiquitously command must be for either 'post' or 'user', e.g.:\n"
         message << "u.me post twitter 'Working with Rails today...'"

@@ -8,7 +8,7 @@ module Ubiquitously
       include Ubiquitously::Restful::Post
       include Ubiquitously::Loggable::Post
       
-      validates_presence_of :title, :description, :tags
+      #validates_presence_of :title, :description, :tags
       attr_accessor :token
       attr_accessor :title, :url, :description, :tags, :categories, :remote, :service_id
       # some sites check to see if you're posting duplicate content!

@@ -2,20 +2,24 @@ module Ubiquitously
   module Command
     class Post < Ubiquitously::Command::Base
       
+      def service
+        services.first
+      end
+      
       def run
-        user = Ubiquitously::User.new(:storage => ".")
+        user = Ubiquitously::User.new(:storage => main_folder)
         user.accountables(services) do |account|
           account = account.new(
             :user => user,
-            :username => attributes[:username],
-            :password => attributes[:password]
+            :username => attributes[:username] || Ubiquitously.key("#{account.service}.key"),
+            :password => attributes[:password] || Ubiquitously.key("#{account.service}.secret")
           )
         end
-        Ubiquitously::Post.new(attributes.merge(:user)).save(services)
+        Ubiquitously::Post.new(attributes.merge(:user => user)).save(services)
       end
       
       def required(attributes)
-        missing = %w(description username password).delete_if { |i| !attributes[i.to_sym].blank? }
+        missing = %w(description).delete_if { |i| !attributes[i.to_sym].blank? }
         unless missing.blank?
           raise CommandInvalid.new("Missing arguments for post: #{missing.join(", ")}")
         end

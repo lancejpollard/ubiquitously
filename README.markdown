@@ -34,6 +34,40 @@ Fill out `test/config.yml` with your credentials for the different services, the
     )
     post.save("stumbleupon", "delicious", "dzone", "digg", "diigo", "reddit", "tumblr", "mixx")
 
+## Command-line
+
+You can post to any of these services (even via oauth) completely from the command line.
+
+    u.me post twitter "This is really crazy"
+
+The anatomy of a command is this:
+
+    u.me post [services] [title] [options]
+
+The `[services]` are a list of services you this command to post to, and the `[title]` is whatever follows (in single/double quotes).  The following will post to Twitter, Tumblr, and Posterous:
+
+    u.me post twitter tumblr posterous "Managing multiple interfaces"
+    
+You can get more precise by specifying options:
+
+- `-l`: label, aka the Post "title"
+- `-d`: description
+- `-u`: url
+- `-t`: tags (`comma,separated,without,any-spaces`)
+- `-U`: username for the service
+- `-P`: password for the service
+
+So you can write a command like this:
+
+    u.me post digg "Oauth on the Command line!?" -d "You can now use Oauth from the command line" -t "oauth, ruby, unix" -u "http://ubiquitously.me"
+
+Ubiquitously will save your login data (cookies, secrets, tokens, and params) in `~/.u.me`.  You can open those files and edit them (add passwords, app keys, etc.) with these commands:
+
+    u.me cookies
+    u.me secrets
+    u.me tokens
+    u.me params
+
 ## How it thinks
 
 It treats everything as a `Post`.  A post has these properties:
@@ -168,9 +202,7 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 
 <cite>copyright @viatropos 2010</cite>
 
-## Tags
-
-Programming, Ruby, Rails, Development, textmate (911)javascript (791)css (747)php (729)jquery (452)html (384)Bash (316)mysql (298)ruby (294)python (291)String (244)wordpress (242)array (208)sql (186)image (174)rails (172)java (167)drupal (166)file (165)actionscript (162)
+## Future additions
 
 - http://www.noupe.com/
 - mashable
@@ -203,6 +235,8 @@ Programming, Ruby, Rails, Development, textmate (911)javascript (791)css (747)ph
 - yahoo meme
 - reddit, digg, diigo, and mixx still don't work
 - diigo doesn't work because cookie expires.  create mechanize to re-login if cookie doesn't work
+- evernote
+- http://www.rubyflow.com
 
 ## Lists
 
@@ -210,21 +244,12 @@ Programming, Ruby, Rails, Development, textmate (911)javascript (791)css (747)ph
 - listiki.com
 - tipbo.com
 
-Social Media Profiles. There a whole bunch of social websites online which allow you to insert a link to your website on the profile page. Sign up for some of them, preferably using a username and avatar that brands your business or you as a person. This might come in useful when you decide to promote your site via the social website in the future.
+## Tips from out there
 
 Ask yourself the following questions about the linkability of your content:
-Am I Digging this because I want others to see it, and pressing a single button is an easy way for me to say “this is cool?”  
-Or am I Digging this because People need to know about this, because they can’t live without it or because without it they would be out of the loop.
-Is it possible that my information is so new and/or informative that I will actually become an authority on this information, or serve as a reference for others interested in writing about similar content?
 
-- evernote
-- http://www.rubyflow.com
-
-## Command-line
-
-It will save your login data (cookies and oauth tokens) in `~/.u.me`
-    
-    u.me post twitter "This is really crazy"
-    u.me post digg -t "Oauth on the Command line!?" -d "You can now use Oauth from the command line" -t "oauth, ruby, unix" -u "http://ubiquitously.me"
+- Am I Digging this because I want others to see it, and pressing a single button is an easy way for me to say "this is cool?"
+- Or am I Digging this because People need to know about this, because they can’t live without it or because without it they would be out of the loop.
+- Is it possible that my information is so new and/or informative that I will actually become an authority on this information, or serve as a reference for others interested in writing about similar content?
 
 > It is only one step more to make it so we fully create all the user accounts if they don't exist on all the services
