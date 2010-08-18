@@ -200,8 +200,6 @@ Currently there's plenty of services to post about yourself: ping.fm, onlywire, 
 - optimize login, i could probably skip the entire "parse form" section and just do a raw post.
 - I don't want to support _every_ service because most of them are spammy or are not used much lately.  Let's keep it clean here.  Some services are also invite only and are in very very specific niches outside my realm.  If you would like to support them, feel free to fork and customize.
 
-<cite>copyright @viatropos 2010</cite>
-
 ## Future additions
 
 - http://www.noupe.com/
@@ -253,3 +251,5 @@ Ask yourself the following questions about the linkability of your content:
 - Is it possible that my information is so new and/or informative that I will actually become an authority on this information, or serve as a reference for others interested in writing about similar content?
 
 > It is only one step more to make it so we fully create all the user accounts if they don't exist on all the services
+
+Ubiquitously is distributed under the MIT license.  Copyright [@viatropos](http://viatropos.com) 2010.
